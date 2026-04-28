@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 
 @Builder
-@Component
 @AllArgsConstructor
 @Getter
 @Setter
