@@ -29,7 +29,7 @@ public class CharacterEntity {
     private String name;
 
     @Column(name = "background_index")
-    private String background_index;
+    private String backgroundIndex;
 
     @Column(name = "background")
     private String background;
@@ -45,9 +45,6 @@ public class CharacterEntity {
 
     @Column(name = "class")
     private String className;
-
-    @Column(name = "level_index")
-    private Integer levelIndex;
 
     @Min(1) @Max(20)
     @Column(name = "level")
