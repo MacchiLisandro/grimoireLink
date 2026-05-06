@@ -8,7 +8,7 @@ public class RestClientConfig {
     @Bean
     public RestClient restClient(){
         return  RestClient.builder()
-                .baseUrl("https://www.dnd5eapi.co/api")
+                .baseUrl("https://www.dnd5eapi.co/api")/// Para no concatenar la url
                 .build();
     }
 }
