@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 @Slf4j
@@ -19,6 +20,7 @@ public class DnDApiService {
         this.restClient = restClient;
     }
 
+    /// get de razas
     public List<DndReference> getRaces()
     {
         DndReferenceList dto = restClient.get()
@@ -28,14 +30,13 @@ public class DnDApiService {
 
         if(dto != null)
         {
-            /// respuesta
             return dto.getResults();
         }
-
         /// Lista sola
         return List.of();
     }
 
+/// get classes
     public List<DndReference> getClasses()
     {
         DndReferenceList dto = restClient.get()
@@ -49,6 +50,24 @@ public class DnDApiService {
         }
 
         return  List.of();
+    }
+
+    /// classDetails
+
+    public DndReference classdetails(String Classindex)
+    {
+        DndReference dto = restClient.get()
+                .uri("/api/2014/classes" + Classindex)
+                .retrieve()
+                .onStatus(
+                        status -> status.value()==400,
+                        (request, response) -> {
+                            throw new RuntimeException(Classindex); ///cambiar dps
+                        }
+                )
+                .body(DndReference.class);
+
+        return dto;
     }
 
 
