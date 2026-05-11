@@ -24,6 +24,7 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column (name = "public_id", unique = true, updatable = false)
     private UUID publicId;
 
     @Column(name = "name", nullable = false)
@@ -32,11 +33,13 @@ public class UserEntity {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "pasword", nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
 
     @PrePersist
     protected void onCreate() {
-        this.publicId = UUID.randomUUID();
+        if (publicId==null){
+            this.publicId = UUID.randomUUID();
+        }
     }
 }
