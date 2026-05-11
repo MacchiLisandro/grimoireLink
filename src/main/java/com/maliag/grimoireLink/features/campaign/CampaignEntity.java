@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Entity
 @Builder
@@ -18,6 +19,7 @@ public class CampaignEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "public_id", nullable = false, unique = true, updatable = false)
     private UUID publicId;
 
     @Column(name = "name", nullable = false)
@@ -26,14 +28,24 @@ public class CampaignEntity {
     @Column(name = "description", nullable = false)
     private String description;
 
-    @Column(name = "inviteCode", nullable = false)
-    private Long inviteCode;
+    @Column(name = "invite_code", nullable = false, unique = true)
+    private String inviteCode;
 
+    @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     private CampaignStatus status;
 
     @PrePersist
     protected void onCreate(){
-        this.publicId = UUID.randomUUID();
+        if(publicId==null){
+            this.publicId = UUID.randomUUID();
+        }
+        if(inviteCode==null){
+            inviteCode = String.format("%06d",
+                    ThreadLocalRandom.current().nextInt(0, 999999));
+        }
+        if(status==null){
+            status = CampaignStatus.ACTIVE;
+        }
     }
 }
