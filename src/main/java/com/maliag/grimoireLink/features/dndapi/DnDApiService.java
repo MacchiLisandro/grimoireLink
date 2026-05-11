@@ -1,11 +1,14 @@
 package com.maliag.grimoireLink.features.dndapi;
+import com.maliag.grimoireLink.features.dndapi.dto.ClassLevelDetail;
 import com.maliag.grimoireLink.features.dndapi.dto.DndReference;
 import com.maliag.grimoireLink.features.dndapi.dto.DndReferenceList;
+import jakarta.validation.constraints.Max;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -68,6 +71,32 @@ public class DnDApiService {
                 .body(DndReference.class);
 
         return dto;
+    }
+
+    /// Get FeatsXClass
+
+    public List<DndReference>getFeaturesForClass(String Classindex, int MaxLvl){
+         ClassLevelDetail[] levelDetail=restClient.get()
+                 .uri("/api/2014/classes/{Classindex}/levels",Classindex)
+                 .retrieve()
+                 .body(ClassLevelDetail[].class);
+
+         if(levelDetail == null) return List.of();
+
+         List<DndReference>features=new ArrayList<>();
+         for (ClassLevelDetail levels:levelDetail)
+         {
+             /// Validaciones///Agregar GLOBALHANDLER
+             if (levels.getLevel() != null
+                 &&  levels.getLevel() <= MaxLvl
+                 &&  levels.getFeatures() != null)
+             {
+                 features.addAll(levels.getFeatures());
+             }
+         }
+         return features;
+
+
     }
 
 
