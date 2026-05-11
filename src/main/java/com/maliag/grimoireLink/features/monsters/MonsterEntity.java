@@ -33,7 +33,7 @@ public class MonsterEntity {
     private Integer dexterity;
     @Column (name = "constitution", nullable = false)
     private Integer constitution;
-    @Column (name = "isAlive", nullable = false)
+    @Column (name = "is_alive", nullable = false)
     private Boolean isAlive;
 
     @PrePersist
