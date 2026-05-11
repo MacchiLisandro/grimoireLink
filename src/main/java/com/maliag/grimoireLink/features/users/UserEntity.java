@@ -1,19 +1,14 @@
 package com.maliag.grimoireLink.features.users;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
 @Builder
-@Component
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @Entity
