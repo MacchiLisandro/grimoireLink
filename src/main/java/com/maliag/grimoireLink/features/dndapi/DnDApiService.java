@@ -2,6 +2,7 @@ package com.maliag.grimoireLink.features.dndapi;
 import com.maliag.grimoireLink.features.dndapi.dto.ClassLevelDetail;
 import com.maliag.grimoireLink.features.dndapi.dto.DndReference;
 import com.maliag.grimoireLink.features.dndapi.dto.DndReferenceList;
+import com.maliag.grimoireLink.features.dndapi.dto.SpellcastingSlots;
 import jakarta.validation.constraints.Max;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import org.springframework.web.client.RestClient;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 @Slf4j
 @Service
@@ -98,6 +100,55 @@ public class DnDApiService {
 
 
     }
+
+/// Helper para devolver los slots por nivel
+    public Integer getMaxSpellsLevel(String Classindex, int characterLevel)
+    {
+        ClassLevelDetail detail=restClient.get()
+                .uri("/api/2014/classes/{ClassIndex}/levels",Classindex,characterLevel)
+                .retrieve()
+                .body(ClassLevelDetail.class);
+
+        if(detail == null || detail.getSpellcasting() == null)
+        {
+            return 0;
+        }
+
+        SpellcastingSlots slots = detail.getSpellcasting();
+        int[] spellSlots = {
+                0, // índice 0 no se usa
+                slots.getSpellSlotsLevel1(),
+                slots.getSpellSlotsLevel2(),
+                slots.getSpellSlotsLevel3(),
+                slots.getSpellSlotsLevel4(),
+                slots.getSpellSlotsLevel5(),
+                slots.getSpellSlotsLevel6(),
+                slots.getSpellSlotsLevel7(),
+                slots.getSpellSlotsLevel8(),
+                slots.getSpellSlotsLevel9()
+        };
+
+        for (int i = 9; i >= 0; i--) {
+            if (spellSlots[i] > 0) return i;
+        }
+
+        return 0;
+    }
+
+
+    public List<DndReference>getSpellsForClassAndLvl(String ClassIndex , int characterlevel)
+    {
+        int maxlevel=getMaxSpellsLevel(ClassIndex,characterlevel);
+        if(maxlevel == 0)return List.of();
+
+        DndReferenceList classSpells=restClient.get()
+                .uri("/api/2014/classes/{classindex}/spells",ClassIndex)
+                .retrieve()
+                .body(DndReferenceList.class);
+
+
+    }
+
 
 
 
