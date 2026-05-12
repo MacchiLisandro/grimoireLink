@@ -19,7 +19,7 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column (name = "public_id", unique = true, updatable = false)
+    @Column (name = "public_id", unique = true, nullable = false, updatable = false)
     private UUID publicId;
 
     @Column(name = "name", nullable = false)
