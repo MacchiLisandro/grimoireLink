@@ -146,6 +146,9 @@ public class DnDApiService {
                 .retrieve()
                 .body(DndReferenceList.class);
 
+        if(classSpells == null ||  classSpells.getResults() == null ) return List.of();
+
+        return classSpells.getResults();
 
     }
 
