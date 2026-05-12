@@ -3,17 +3,11 @@ import com.maliag.grimoireLink.features.dndapi.dto.ClassLevelDetail;
 import com.maliag.grimoireLink.features.dndapi.dto.DndReference;
 import com.maliag.grimoireLink.features.dndapi.dto.DndReferenceList;
 import com.maliag.grimoireLink.features.dndapi.dto.SpellcastingSlots;
-import jakarta.validation.constraints.Max;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
-
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
 
-@Slf4j
 @Service
 public class DnDApiService {
 
