@@ -1,8 +1,5 @@
 package com.maliag.grimoireLink.features.dndapi;
-import com.maliag.grimoireLink.features.dndapi.dto.ClassLevelDetail;
-import com.maliag.grimoireLink.features.dndapi.dto.DndReference;
-import com.maliag.grimoireLink.features.dndapi.dto.DndReferenceList;
-import com.maliag.grimoireLink.features.dndapi.dto.SpellcastingSlots;
+import com.maliag.grimoireLink.features.dndapi.dto.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import java.util.ArrayList;
@@ -51,20 +48,20 @@ public class DnDApiService {
         return  List.of();
     }
 
-    /// classDetails
+    /// getclassDetails
 
-    public DndReference classdetails(String Classindex)
+    public ClassDetail getclassdetails(String Classindex)
     {
-        DndReference dto = restClient.get()
+        ClassDetail dto = restClient.get()
                 .uri("/api/2014/classes" + Classindex)
                 .retrieve()
                 .onStatus(
                         status -> status.value()==400,
                         (request, response) -> {
-                            throw new RuntimeException(Classindex); ///cambiar dps
+                            throw new IllegalArgumentException("Clase no existente:" + Classindex  ); ///cambiar dps
                         }
                 )
-                .body(DndReference.class);
+                .body(ClassDetail.class);
 
         return dto;
     }
