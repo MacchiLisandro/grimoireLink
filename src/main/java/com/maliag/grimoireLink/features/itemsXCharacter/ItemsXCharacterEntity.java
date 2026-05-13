@@ -1,8 +1,9 @@
-package com.maliag.grimoireLink.features.featuresXCharacter;
+package com.maliag.grimoireLink.features.itemsXCharacter;
 
 import com.maliag.grimoireLink.features.characters.CharacterEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.apache.commons.lang3.builder.HashCodeExclude;
 
 import java.util.UUID;
 
@@ -13,30 +14,36 @@ import java.util.UUID;
 @Setter
 @Entity
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Table(name = "feature_x_character")
-public class FeatureXCharacterEntity {
+@Table(name = "items_x_character")
+public class ItemsXCharacterEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @EqualsAndHashCode.Include
-    @Column(name = "public_id", unique = true, nullable = false, updatable = false)
+    @Column (name = "public_id", unique = true, nullable = false, updatable = false)
     private UUID publicId;
 
     @ManyToOne
     @JoinColumn(name = "character_id", nullable = false)
     private CharacterEntity character;
 
-    @Column (name = "feature_index", nullable = false)
-    private String featureIndex;
+    @Column(name = "item_index", nullable = false)
+    private String itemIndex;
 
     @Column (name = "name", nullable = false)
     private String name;
 
+    @Column(name = "equipped", nullable = false)
+    private Boolean equipped;
+
     @PrePersist
     protected void onCreate() {
-        if (publicId==null){
+        if (publicId == null) {
             this.publicId = UUID.randomUUID();
+        }
+        if (equipped == null) {
+            equipped = false;
         }
     }
 }
