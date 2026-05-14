@@ -2,8 +2,7 @@ package com.maliag.grimoireLink.features.users;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.stereotype.Component;
-
+import java.util.List;
 import java.util.UUID;
 
 @Builder
@@ -13,12 +12,13 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "users")
-
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @EqualsAndHashCode.Include
     @Column (name = "public_id", unique = true, nullable = false, updatable = false)
     private UUID publicId;
 
@@ -30,6 +30,9 @@ public class UserEntity {
 
     @Column(name = "password", nullable = false)
     private String password;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<UsersXCampaignEntity> usersXCampaign;
 
     @PrePersist
     protected void onCreate() {
