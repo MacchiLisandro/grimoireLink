@@ -12,8 +12,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
-@Table(name="players_x_campaign")
-public class PlayersXCampaignEntity {
+@Table(name="users_x_campaign")
+public class UsersXCampaignEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

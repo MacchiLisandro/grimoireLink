@@ -3,6 +3,8 @@ package com.maliag.grimoireLink.features.campaign;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -34,6 +36,9 @@ public class CampaignEntity {
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     private CampaignStatus status;
+
+    @OneToMany(mappedBy = "campaign")
+    private List<UsersXCampaignEntity> users = new ArrayList<>();
 
     @PrePersist
     protected void onCreate(){
