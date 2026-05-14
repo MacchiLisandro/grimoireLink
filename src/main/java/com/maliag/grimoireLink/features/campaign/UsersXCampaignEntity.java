@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Builder
@@ -14,11 +15,16 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Table(name="users_x_campaign")
+@EqualsAndHashCode(onlyExplicitlyIncluded = false)
 public class UsersXCampaignEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @EqualsAndHashCode.Include
+    @Column(name = "public_id", nullable = false)
+    private UUID publicId;
 
     @ManyToOne
     @JoinColumn(name = "campaign_id")
@@ -37,6 +43,9 @@ public class UsersXCampaignEntity {
 
     @PrePersist
     protected void onCreate(){
+        if(publicId==null){
+            this.publicId = UUID.randomUUID();
+        }
         if(joinDate==null){
             joinDate = LocalDateTime.now();
         }
