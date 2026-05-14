@@ -1,6 +1,6 @@
 package com.maliag.grimoireLink.features.characters;
 
-import com.maliag.grimoireLink.features.campaign.CampaignEntity;
+import com.maliag.grimoireLink.features.campaign.PlayersXCampaignEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -22,7 +22,9 @@ public class CharacterEntity {
     @Column(name="character_id")
     private Long id;
 
-    /// PXCID IMPLEMENTACION
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pxc_id",nullable = false,unique = true)
+    private PlayersXCampaignEntity playersXCampaignEntity;
 
     @NotBlank
     @Column(nullable = false)
