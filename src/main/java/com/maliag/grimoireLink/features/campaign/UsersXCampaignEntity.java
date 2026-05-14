@@ -1,5 +1,6 @@
 package com.maliag.grimoireLink.features.campaign;
 
+import com.maliag.grimoireLink.features.users.Role;
 import com.maliag.grimoireLink.features.users.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -29,6 +30,10 @@ public class UsersXCampaignEntity {
 
     @Column(name = "join_date", nullable = false)
     private LocalDateTime joinDate;
+
+    @Column(name = "role", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @PrePersist
     protected void onCreate(){
