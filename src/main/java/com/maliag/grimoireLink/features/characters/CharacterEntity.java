@@ -1,6 +1,6 @@
 package com.maliag.grimoireLink.features.characters;
 
-import com.maliag.grimoireLink.features.campaign.PlayersXCampaignEntity;
+import com.maliag.grimoireLink.features.campaign.UsersXCampaignEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -23,8 +23,8 @@ public class CharacterEntity {
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pxc_id",nullable = false,unique = true)
-    private PlayersXCampaignEntity playersXCampaignEntity;
+    @JoinColumn(name = "uxc_id",nullable = false,unique = true)
+    private UsersXCampaignEntity usersXCampaignEntity;
 
     @NotBlank
     @Column(nullable = false)
