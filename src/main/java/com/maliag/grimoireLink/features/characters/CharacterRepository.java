@@ -8,6 +8,6 @@ import java.util.Optional;
 @Repository
 public interface CharacterRepository extends JpaRepository<CharacterEntity, Long> {
 
-    Optional<CharacterEntity> findByPlayerId(Long pxcId);
+    Optional<CharacterEntity> findByUsersXCampaignEntity_Id(Long uxcId);
 
 }
