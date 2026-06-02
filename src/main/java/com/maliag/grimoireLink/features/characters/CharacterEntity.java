@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.util.UUID;
+
 @Entity
 @Builder
 @AllArgsConstructor
@@ -21,6 +23,9 @@ public class CharacterEntity {
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     @Column(name="character_id")
     private Long id;
+
+    @Column(name = "public_id",nullable = false,unique = true,updatable = false)
+    private UUID publicId;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "uxc_id",nullable = false,unique = true)
@@ -71,5 +76,12 @@ public class CharacterEntity {
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private CharacterStatus status = CharacterStatus.ALIVE;
+
+    @PrePersist
+    public void oncreate(){
+        if (publicId == null){
+            publicId=UUID.randomUUID();
+        }
+    }
 
 }
