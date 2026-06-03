@@ -29,12 +29,12 @@ public class EncounterEntity {
     @Enumerated(EnumType.STRING)
     private ChallengeRating challengeRating;
 
-    @Column(name = "description", columnDefinition = "TEXT", nullable = false)
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
     @Column(name = "encounter_status", nullable = false)
     @Enumerated(EnumType.STRING)
-    private String encounterStatus;
+    private EncounterStatus encounterStatus;
 
     @PrePersist
     void onCreate(){
