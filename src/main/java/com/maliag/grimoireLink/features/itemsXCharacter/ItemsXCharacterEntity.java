@@ -37,6 +37,9 @@ public class ItemsXCharacterEntity {
     @Column(name = "equipped", nullable = false)
     private Boolean equipped;
 
+    @Column(name = "quantity",nullable = false)
+    private Integer quantity;
+
     @PrePersist
     protected void onCreate() {
         if (publicId == null) {

@@ -9,6 +9,7 @@ import lombok.Data;
 public class CharacterItemResponse {
 
     private String itemIndex;
+    private String name;
     private Boolean equipped;
     private Integer quantity;
 
