@@ -23,9 +23,9 @@ public class JournalEntity {
     @Column(name = "public_id", nullable = false, unique = true, updatable = false)
     private UUID publicId;
 
-    @Column(name = "journal_type", nullable = false)
+    @Column(name = "journal_entry_type", nullable = false)
     @Enumerated(EnumType.STRING)
-    private JournalType journalType;
+    private JournalEntryType journalEntryType;
 
     @Column(name = "date", nullable = false)
     private LocalDateTime date;

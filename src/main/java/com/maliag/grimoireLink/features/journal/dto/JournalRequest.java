@@ -1,6 +1,6 @@
 package com.maliag.grimoireLink.features.journal.dto;
 
-import com.maliag.grimoireLink.features.journal.JournalType;
+import com.maliag.grimoireLink.features.journal.JournalEntryType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
@@ -13,7 +13,7 @@ import java.util.UUID;
 public class JournalRequest {
 
     @NotNull
-    private JournalType journalType;
+    private JournalEntryType journalEntryType;
 
     @NotNull
     @Size(max = 65535)
