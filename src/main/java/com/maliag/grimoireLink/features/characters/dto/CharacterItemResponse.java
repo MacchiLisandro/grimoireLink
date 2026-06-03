@@ -8,7 +8,6 @@ import lombok.Data;
 @Builder
 public class CharacterItemResponse {
 
-    private Long id;
     private String itemIndex;
     private Boolean equipped;
     private Integer quantity;
