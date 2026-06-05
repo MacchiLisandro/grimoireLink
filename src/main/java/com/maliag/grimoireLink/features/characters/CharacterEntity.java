@@ -1,6 +1,6 @@
 package com.maliag.grimoireLink.features.characters;
 
-import com.maliag.grimoireLink.features.campaign.UsersXCampaignEntity;
+import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
