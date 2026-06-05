@@ -53,7 +53,7 @@ public class DnDApiService {
     public ClassDetail getclassdetails(String Classindex)
     {
         ClassDetail dto = restClient.get()
-                .uri("/api/2014/classes" + Classindex)
+                .uri("/api/2014/classes/{index}" + Classindex)
                 .retrieve()
                 .onStatus(
                         status -> status.value()==400,
@@ -66,7 +66,7 @@ public class DnDApiService {
         return dto;
     }
 
-    /// Get FeatsXClass
+    /// Get FeaturesXClass
 
     public List<DndReference>getFeaturesForClass(String Classindex, int MaxLvl){
          ClassLevelDetail[] levelDetail=restClient.get()
@@ -91,6 +91,15 @@ public class DnDApiService {
 
 
     }
+    public DndReference getSubclass(String index){
+         return restClient.get()
+                 .uri("api/2014/subclasses/{index}")
+                 .retrieve()
+                 .body(DndReference.class);
+    }
+
+
+
 
 /// Helper para devolver los slots por nivel
     public Integer getMaxSpellsLevel(String Classindex, int characterLevel)

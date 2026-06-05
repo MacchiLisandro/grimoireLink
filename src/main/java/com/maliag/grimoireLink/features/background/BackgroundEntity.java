@@ -21,11 +21,17 @@ public class BackgroundEntity {
     @Column(name = "public_id", nullable = false, unique = true, updatable = false)
     private UUID publicId;
 
+    @Column(name = "index")
+    private String backgroundIndex;
+
     @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "description", columnDefinition = "TEXT", nullable = false)
     private String description;
+
+    @Column(name ="Languages")
+    private String languages;
 
     @PrePersist
     void onCreate(){

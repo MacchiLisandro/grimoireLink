@@ -1,6 +1,7 @@
 package com.maliag.grimoireLink.features.characters;
 
 import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignEntity;
+import com.maliag.grimoireLink.features.background.BackgroundEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -35,11 +36,9 @@ public class CharacterEntity {
     @Column(nullable = false)
     private String name;
 
-    @Column(name = "background_index")
-    private String backgroundIndex;
-
-    @Column(name = "background")
-    private String background;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "background_id")
+    private BackgroundEntity background;
 
     @Column(name = "race_index")
     private String raceIndex;
@@ -52,6 +51,12 @@ public class CharacterEntity {
 
     @Column(name = "class")
     private String className;
+
+    @Column(name = "subclass_index")
+    private String subclassIndex;
+
+    @Column(name = "subclass_name")
+    private String subclassName;
 
     @Min(1) @Max(20)
     @Column(name = "level")

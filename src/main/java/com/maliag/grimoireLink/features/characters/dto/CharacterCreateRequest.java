@@ -27,6 +27,9 @@ public class CharacterCreateRequest {
     @NotBlank(message = "Se debe elegir una clase")
     private String classIndex;
 
+    /// puede venir null si no es el nivel adecuado o no llega a el nivel
+    private String subclassIndex;
+
     @NotBlank(message = "Se debe tener un background")
     private String backgroundIndex;
 

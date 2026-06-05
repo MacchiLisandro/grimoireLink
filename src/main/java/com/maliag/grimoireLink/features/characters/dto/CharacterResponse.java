@@ -3,6 +3,7 @@ package com.maliag.grimoireLink.features.characters.dto;
 import com.maliag.grimoireLink.features.characters.CharacterStatus;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.boot.internal.Abstract;
@@ -13,6 +14,7 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class CharacterResponse {
 
     private UUID publicId;
@@ -20,7 +22,10 @@ public class CharacterResponse {
     private String race;
     private String characterClass;
     private String subclass;
+    private String background;
     private Integer level;
+    private Integer maxHP;
+    private Integer currentHP;
     private Integer gold;
     private CharacterStatus status;
 
@@ -38,6 +43,7 @@ public class CharacterResponse {
     private Integer strenghMod;
     private Integer dexterityMod;
     private Integer wisdomMod;
+    private Integer charismaMod;
     private Integer constitutionMod;
     private Integer intelligenceMod;
 
