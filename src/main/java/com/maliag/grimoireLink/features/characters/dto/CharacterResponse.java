@@ -22,6 +22,7 @@ public class CharacterResponse {
     private String race;
     private String characterClass;
     private String subclass;
+    private String background;
     private Integer level;
     private Integer maxHP;
     private Integer currentHP;

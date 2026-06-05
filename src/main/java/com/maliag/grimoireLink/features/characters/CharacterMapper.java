@@ -1,5 +1,6 @@
 package com.maliag.grimoireLink.features.characters;
 
+import com.maliag.grimoireLink.features.characters.dto.CharacterCreateRequest;
 import com.maliag.grimoireLink.features.characters.dto.CharacterItemResponse;
 import com.maliag.grimoireLink.features.characters.dto.CharacterResponse;
 import com.maliag.grimoireLink.features.featuresXCharacter.FeatureXCharacterEntity;
@@ -28,7 +29,7 @@ public class CharacterMapper {
                 .race(character.getRaceName())
                 .characterClass(character.getClassName())
                 ///.subclass(character.getsubclass)
-                ///.backgroundIndex(c.getBackgroundIndex())
+                ///.background(character.getBackgroundIndex())
                 .level(character.getLevel())
                 .maxHP(character.getMaxHP())
                 .currentHP(character.getCurrentHp())
@@ -58,6 +59,13 @@ public class CharacterMapper {
 
                 /// Fijarnos si hacemos un helper para resumir el personaje de manera bonita
                 .build();
+    }
+
+
+    public CharacterEntity toEntity(CharacterCreateRequest request){
+
+
+
     }
 
 
