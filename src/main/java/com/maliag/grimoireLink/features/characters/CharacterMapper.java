@@ -1,13 +1,16 @@
 package com.maliag.grimoireLink.features.characters;
 
+import com.maliag.grimoireLink.features.background.BackgroundEntity;
 import com.maliag.grimoireLink.features.characters.dto.CharacterCreateRequest;
 import com.maliag.grimoireLink.features.characters.dto.CharacterItemResponse;
 import com.maliag.grimoireLink.features.characters.dto.CharacterResponse;
 import com.maliag.grimoireLink.features.featuresXCharacter.FeatureXCharacterEntity;
 import com.maliag.grimoireLink.features.itemsXCharacter.ItemsXCharacterEntity;
 import com.maliag.grimoireLink.features.spellsXCharacter.SpellsXCharacterEntity;
+import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -20,7 +23,7 @@ public class CharacterMapper {
                                         List<FeatureXCharacterEntity> features,
                                         List<ItemsXCharacterEntity> items){
 
-        int proeficiencyBonus=proficiencyBonus(character.getLevel());
+        int proficiencyBonus=proficiencyBonus(character.getLevel());
 
 
         return CharacterResponse.builder()
@@ -28,14 +31,15 @@ public class CharacterMapper {
                 .name(character.getName())
                 .race(character.getRaceName())
                 .characterClass(character.getClassName())
-                ///.subclass(character.getsubclass)
-                ///.background(character.getBackgroundIndex())
+                .subclass(character.getSubclassName())
+                .background(resolveBackground(character))
                 .level(character.getLevel())
                 .maxHP(character.getMaxHP())
                 .currentHP(character.getCurrentHp())
                 .gold(character.getGold())
                 .status(character.getStatus())
-                .proficiencyBonus(proeficiencyBonus)
+                .proficiencyBonus(proficiencyBonus)
+                /// Las tiradas de abilityScore van por acua
                 .strengh(character.getStrength())
                 .dexterity(character.getDexterity())
                 .intelligence(character.getIntelligence())
@@ -47,25 +51,44 @@ public class CharacterMapper {
                 .wisdomMod(modifier(character.getWisdom()))
                 .charismaMod(modifier(character.getCharisma()))
 
-                .knowSpells(spells.stream()
-                        .map(SpellsXCharacterEntity::getSpellIndex)
-                        .toList())
-                .featureIndices(features.stream()
-                        .map(FeatureXCharacterEntity::getFeatureIndex)
-                        .toList())
-                .items(items.stream()
-                        .map(this::toItemResponse)
-                        .toList())
-
-                /// Fijarnos si hacemos un helper para resumir el personaje de manera bonita
+                /// Items, Hechizos,Features del personaje
+                .knowSpells(mapSpells(spells))
+                .featureIndices(mapFeatures(features))
+                .items(mapItems(items))
+                /// Su hoja de personaje
+                .summary(buildHojaPersonaje(character,proficiencyBonus))
                 .build();
     }
 
 
-    public CharacterEntity toEntity(CharacterCreateRequest request){
-
-
-
+    public CharacterEntity toEntity(CharacterCreateRequest request,
+                                    UsersXCampaignEntity members,
+                                    BackgroundEntity background,
+                                    String racename,
+                                    String className,
+                                    String subclassName,
+                                    int maxHP){
+        return CharacterEntity.builder()
+                .usersXCampaignEntity(members)
+                .name(request.getName())
+                .background(background)
+                .raceIndex(request.getRaceIndex())
+                .raceName(racename)
+                .classIndex(request.getClassIndex())
+                .className(className)
+                .subclassIndex(request.getSubclassIndex())
+                .subclassName(subclassName)
+                .level(request.getLevel())
+                .maxHP(maxHP)
+                .currentHp(maxHP)
+                .strength(request.getStrength())
+                .dexterity(request.getDexterity())
+                .constitution(request.getConstitution())
+                .intelligence(request.getIntelligence())
+                .wisdom(request.getWisdom())
+                .charisma(request.getCharisma())
+                .gold(request.getGold() != null ? request.getGold() : 0)
+                .build();
     }
 
 
@@ -93,6 +116,62 @@ public class CharacterMapper {
                 .build();
     }
 
+    /// eliminar despues de cerrar el tema del seeder de backgrounds
+    private String resolveBackground(CharacterEntity c) {
+        if (c.getBackground() == null) {
+            return null;
+        }
+        return c.getBackground().getName();
+    }
 
+    /// Helpers para el mapeo
+
+    private List<String>mapFeatures(List<FeatureXCharacterEntity> features){
+        List<String> resultado=new ArrayList<>();
+
+        if (features == null){
+            return resultado;
+        }
+        for (FeatureXCharacterEntity feature:features){
+            resultado.add(feature.getFeatureIndex());
+        }
+        return resultado;
+    }
+
+    private List<String>mapSpells(List<SpellsXCharacterEntity>spells){
+        List<String>resultado=new ArrayList<>();
+        if (spells == null)return resultado;
+
+        for (SpellsXCharacterEntity spell: spells){
+            resultado.add(spell.getName());
+        }
+        return  resultado;
+    }
+
+    private List<CharacterItemResponse>mapItems(List<ItemsXCharacterEntity> items){
+        List<CharacterItemResponse> resultado=new ArrayList<>();
+        if (items== null)return resultado;
+
+        for (ItemsXCharacterEntity item : items){
+            CharacterItemResponse dto= CharacterItemResponse.builder()
+                    .name(item.getName())
+                    .quantity(item.getQuantity())
+                    .equipped(item.getEquipped())
+                    .build();
+            resultado.add(dto);
+        }
+        return resultado;
+    }
+
+    private String buildHojaPersonaje(CharacterEntity character, int proefBonus){
+        return String.format(
+                "%s — %s %s nivel %d (PB +%d)",
+                character.getName(),
+                character.getRaceName(),
+                character.getClassName(),
+                character.getLevel(),
+                proefBonus
+        );
+    }
 
 }
