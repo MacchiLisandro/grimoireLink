@@ -34,7 +34,7 @@ public class SpellsXCharacterEntity {
     private String name;
 
     @PrePersist
-    protected void onCreate() {
+    void onCreate() {
         if (publicId == null) {
             this.publicId = UUID.randomUUID();
         }

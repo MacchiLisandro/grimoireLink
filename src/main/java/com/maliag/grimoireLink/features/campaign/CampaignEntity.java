@@ -42,7 +42,7 @@ public class CampaignEntity {
     private List<UsersXCampaignEntity> users = new ArrayList<>();
 
     @PrePersist
-    protected void onCreate(){
+    void onCreate(){
         if(publicId==null){
             this.publicId = UUID.randomUUID();
         }

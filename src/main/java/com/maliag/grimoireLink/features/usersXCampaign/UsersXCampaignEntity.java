@@ -37,7 +37,7 @@ public class UsersXCampaignEntity {
     private Role role;
 
     @PrePersist
-    protected void onCreate(){
+    void onCreate(){
         if(joinDate==null){
             joinDate = LocalDateTime.now();
         }
