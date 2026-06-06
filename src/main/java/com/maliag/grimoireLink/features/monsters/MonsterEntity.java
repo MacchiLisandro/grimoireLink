@@ -46,7 +46,7 @@ public class MonsterEntity {
     private Boolean isAlive;
 
     @PrePersist
-    protected void onCreate() {
+    void onCreate() {
         if (publicId==null){
             this.publicId = UUID.randomUUID();
         }

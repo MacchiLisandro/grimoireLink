@@ -83,7 +83,7 @@ public class CharacterEntity {
     private CharacterStatus status = CharacterStatus.ALIVE;
 
     @PrePersist
-    public void oncreate(){
+    void onCreate(){
         if (publicId == null){
             publicId=UUID.randomUUID();
         }

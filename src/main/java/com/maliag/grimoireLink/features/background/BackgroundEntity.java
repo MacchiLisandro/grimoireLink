@@ -21,7 +21,7 @@ public class BackgroundEntity {
     @Column(name = "public_id", nullable = false, unique = true, updatable = false)
     private UUID publicId;
 
-    @Column(name = "index")
+    @Column(name = "background_index")
     private String backgroundIndex;
 
     @Column(name = "name", nullable = false)
