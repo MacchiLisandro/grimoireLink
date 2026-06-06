@@ -1,28 +1,26 @@
 package com.maliag.grimoireLink.features.users;
 
+import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.stereotype.Component;
-
+import lombok.*;
+import java.util.List;
 import java.util.UUID;
 
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @Entity
 @Table(name = "users")
-
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @EqualsAndHashCode.Include
+    @Column (name = "public_id", unique = true, nullable = false, updatable = false)
     private UUID publicId;
 
     @Column(name = "name", nullable = false)
@@ -31,11 +29,16 @@ public class UserEntity {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "pasword", nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<UsersXCampaignEntity> usersXCampaign;
+
     @PrePersist
-    protected void onCreate() {
-        this.publicId = UUID.randomUUID();
+    void onCreate() {
+        if (publicId==null){
+            this.publicId = UUID.randomUUID();
+        }
     }
 }
