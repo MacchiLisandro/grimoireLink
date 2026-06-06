@@ -42,6 +42,15 @@ public class MonsterEntity {
     @Column (name = "constitution", nullable = false)
     private Integer constitution;
 
+    @Column (name = "intelligence", nullable = false)
+    private Integer intelligence;
+
+    @Column (name = "wisdom", nullable = false)
+    private Integer wisdom;
+
+    @Column (name = "charisma", nullable = false)
+    private Integer charisma;
+
     @Column (name = "is_alive", nullable = false)
     private Boolean isAlive;
 
