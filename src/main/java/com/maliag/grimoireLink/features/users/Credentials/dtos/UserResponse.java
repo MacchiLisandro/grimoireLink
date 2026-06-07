@@ -1,4 +1,4 @@
-package com.maliag.grimoireLink.features.users.dtos;
+package com.maliag.grimoireLink.features.users.Credentials.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

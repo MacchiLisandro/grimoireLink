@@ -1,10 +1,8 @@
 package com.maliag.grimoireLink.features.users;
 
-import com.maliag.grimoireLink.features.users.dtos.UserLoginRequest;
-import com.maliag.grimoireLink.features.users.dtos.UserRegisterRequest;
-import com.maliag.grimoireLink.features.users.dtos.UserResponse;
+import com.maliag.grimoireLink.features.users.Credentials.dtos.UserRegisterRequest;
+import com.maliag.grimoireLink.features.users.Credentials.dtos.UserResponse;
 import com.maliag.grimoireLink.features.users.exceptions.UserAlreadyExistsException;
-import com.maliag.grimoireLink.features.users.exceptions.UserNotRegisteredOrPasswordIncorrectException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,12 +21,12 @@ public class UserService {
         return userMapper.toResponse(userRepository.save(userMapper.RegisterToEntity(request)));
     }
 
-    @Transactional
-    public UserResponse login (UserLoginRequest request){
-        if (!userRepository.existsByEmail(request.getEmail())) {
-            throw new UserNotRegisteredOrPasswordIncorrectException("email doesn't exists or password is incorrect");
-        }
-        if (userRepository.findByEmail(request.getEmail()))
-
-    }
+//    @Transactional
+//    public UserResponse login (UserLoginRequest request){
+//        if (!userRepository.existsByEmail(request.getEmail())) {
+//            throw new UserNotRegisteredOrPasswordIncorrectException("email doesn't exists or password is incorrect");
+//        }
+//        if (userRepository.findByEmail(request.getEmail()))
+//
+//    }
 }
