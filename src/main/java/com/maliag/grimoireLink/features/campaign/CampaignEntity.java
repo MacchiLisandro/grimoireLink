@@ -38,17 +38,13 @@ public class CampaignEntity {
     @Enumerated(EnumType.STRING)
     private CampaignStatus status;
 
-    @OneToMany(mappedBy = "campaign")
+    @OneToMany(mappedBy = "campaign", fetch = FetchType.LAZY)
     private List<UsersXCampaignEntity> users = new ArrayList<>();
 
     @PrePersist
     void onCreate(){
         if(publicId==null){
             this.publicId = UUID.randomUUID();
-        }
-        if(inviteCode==null){
-            inviteCode = String.format("%06d",
-                    ThreadLocalRandom.current().nextInt(0, 999999));
         }
         if(status==null){
             status = CampaignStatus.ACTIVE;
