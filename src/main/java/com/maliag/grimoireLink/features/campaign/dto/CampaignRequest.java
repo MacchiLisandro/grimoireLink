@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class CampaignRequestDto {
+public class CampaignRequest {
 
     @NotBlank
     private String name;
