@@ -33,6 +33,9 @@ public class FeatureXCharacterEntity {
     @Column (name = "name", nullable = false)
     private String name;
 
+    @Column(name = "source", nullable = false)
+    private String source;
+
     @PrePersist
     void onCreate() {
         if (publicId==null){
