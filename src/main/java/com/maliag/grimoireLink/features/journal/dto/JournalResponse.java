@@ -1,6 +1,6 @@
 package com.maliag.grimoireLink.features.journal.dto;
 
-import com.maliag.grimoireLink.features.campaign.dto.CampaignResponseDto;
+import com.maliag.grimoireLink.features.campaign.dto.CampaignResponse;
 import com.maliag.grimoireLink.features.journal.JournalEntryType;
 import lombok.Builder;
 import lombok.Data;
@@ -16,5 +16,5 @@ public class JournalResponse {
     private JournalEntryType journalEntryType;
     private LocalDateTime date;
     private String description;
-    private CampaignResponseDto campaign;
+    private CampaignResponse campaign;
 }

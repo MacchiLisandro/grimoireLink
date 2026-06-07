@@ -1,8 +1,11 @@
 package com.maliag.grimoireLink.features.encounter;
 
+import com.maliag.grimoireLink.features.characters.CharacterEntity;
+import com.maliag.grimoireLink.features.monsters.MonsterEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -12,8 +15,10 @@ import java.util.UUID;
 @Getter
 @Setter
 @Table(name = "encounters")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class EncounterEntity {
 
+    @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,6 +40,22 @@ public class EncounterEntity {
     @Column(name = "encounter_status", nullable = false)
     @Enumerated(EnumType.STRING)
     private EncounterStatus encounterStatus;
+
+    @ManyToMany
+    @JoinTable(
+            name = "encounters_x_character",
+            joinColumns = @JoinColumn(name = "encounter_id"),
+            inverseJoinColumns = @JoinColumn(name = "character_id")
+    )
+    private List<CharacterEntity> characters;
+
+    @ManyToMany
+    @JoinTable(
+            name = "encounters_x_monster",
+            joinColumns = @JoinColumn(name = "encounter_id"),
+            inverseJoinColumns = @JoinColumn(name = "monster_id")
+    )
+    private List<MonsterEntity> monsters;
 
     @PrePersist
     void onCreate(){

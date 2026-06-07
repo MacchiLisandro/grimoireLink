@@ -1,17 +1,19 @@
 package com.maliag.grimoireLink.features.campaign.dto;
 
 import com.maliag.grimoireLink.features.campaign.CampaignStatus;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.UUID;
-
 @Data
 @Builder
-public class CampaignResponseDto {
-    private UUID publicId;
+public class UpdateCampaignRequest {
+
     private String name;
+
+    @Size(max = 65535)
     private String description;
-    private Long inviteCode;
+
     private CampaignStatus status;
 }
