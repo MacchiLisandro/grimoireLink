@@ -7,7 +7,7 @@ import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignMapper;
 import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignRepository;
 import com.maliag.grimoireLink.features.usersXCampaign.dto.CampaignMemberResponse;
 import jakarta.persistence.EntityNotFoundException;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,13 +17,13 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CampaignServiceImpl implements CampaignService{
 
-    private CampaignRepository repository;
-    private CampaignMapper mapper;
-    private UsersXCampaignRepository uxcRepository;
-    private UsersXCampaignMapper uxcMapper;
+    private final CampaignRepository repository;
+    private final CampaignMapper mapper;
+    private final UsersXCampaignRepository uxcRepository;
+    private final UsersXCampaignMapper uxcMapper;
 
     @Transactional(readOnly = true)
     public CampaignEntity findByPublicId(UUID publicId){
