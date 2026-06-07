@@ -53,7 +53,7 @@ public class DnDApiService {
     public ClassDetail getclassdetails(String Classindex)
     {
         ClassDetail dto = restClient.get()
-                .uri("/api/2014/classes/{index}" + Classindex)
+                .uri("/api/2014/classes/{index}",Classindex)
                 .retrieve()
                 .onStatus(
                         status -> status.value()==400,
@@ -93,12 +93,29 @@ public class DnDApiService {
     }
     public DndReference getSubclass(String index){
          return restClient.get()
-                 .uri("api/2014/subclasses/{index}")
+                 .uri("api/2014/subclasses/{index}", index)
                  .retrieve()
                  .body(DndReference.class);
     }
 
+    public DndReference getRaceByIndex(String index){
+        return restClient.get()
+                .uri("/api/2014/races/{index}")
+                .retrieve()
+                .body(DndReference.class);
+    }
 
+    public List<DndReference> getRaceFeatures(String index){
+        RaceDetails details=restClient.get()
+                .uri("/api/2014/races/{index}",index)
+                .retrieve()
+                .body(RaceDetails.class);
+        if (details == null || details.getTraits() == null){
+            return List.of();
+        }
+
+        return details.getTraits();
+    }
 
 
 /// Helper para devolver los slots por nivel
