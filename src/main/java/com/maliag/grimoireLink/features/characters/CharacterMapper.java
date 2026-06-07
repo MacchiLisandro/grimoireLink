@@ -50,6 +50,7 @@ public class CharacterMapper {
                 .dexterityMod(modifier(character.getDexterity()))
                 .wisdomMod(modifier(character.getWisdom()))
                 .charismaMod(modifier(character.getCharisma()))
+                .intelligenceMod(modifier(character.getIntelligence()))
 
                 /// Items, Hechizos,Features del personaje
                 .knowSpells(mapSpells(spells))
