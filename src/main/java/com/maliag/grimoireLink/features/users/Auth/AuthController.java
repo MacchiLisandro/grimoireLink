@@ -1,8 +1,8 @@
 package com.maliag.grimoireLink.features.users.Auth;
 
 import com.maliag.grimoireLink.features.users.UserService;
-import com.maliag.grimoireLink.features.users.Credentials.dtos.UserRegisterRequest;
-import com.maliag.grimoireLink.features.users.Credentials.dtos.UserResponse;
+import com.maliag.grimoireLink.features.users.dtos.UserRegisterRequest;
+import com.maliag.grimoireLink.features.users.dtos.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,4 +1,4 @@
-package com.maliag.grimoireLink.features.users.Credentials.dtos;
+package com.maliag.grimoireLink.features.users.dtos;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -9,10 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserRegisterRequest {
-    @NotBlank
-    private String name;
-
+public class UserLoginRequest {
     @Email
     private String email;
 
