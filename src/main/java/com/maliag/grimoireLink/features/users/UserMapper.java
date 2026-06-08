@@ -5,7 +5,7 @@ import com.maliag.grimoireLink.features.users.Credentials.dtos.UserRegisterReque
 import com.maliag.grimoireLink.features.users.Credentials.dtos.UserResponse;
 import org.mapstruct.Mapper;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface UserMapper {
     UserEntity LoginToEntity (UserLoginRequest request);
     UserEntity RegisterToEntity (UserRegisterRequest request);
