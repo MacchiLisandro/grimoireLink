@@ -1,5 +1,6 @@
 package com.maliag.grimoireLink.features.users;
 
+import com.maliag.grimoireLink.features.users.Credentials.CredentialsEntity;
 import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -15,12 +16,13 @@ import java.util.UUID;
 @Table(name = "users")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class UserEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @EqualsAndHashCode.Include
-    @Column (name = "public_id", unique = true, nullable = false, updatable = false)
+    @Column(name = "public_id", unique = true, nullable = false, updatable = false)
     private UUID publicId;
 
     @Column(name = "name", nullable = false)
@@ -29,15 +31,15 @@ public class UserEntity {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "password", nullable = false)
-    private String password;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private CredentialsEntity credentials;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UsersXCampaignEntity> usersXCampaign;
 
     @PrePersist
     void onCreate() {
-        if (publicId==null){
+        if (publicId == null) {
             this.publicId = UUID.randomUUID();
         }
     }
