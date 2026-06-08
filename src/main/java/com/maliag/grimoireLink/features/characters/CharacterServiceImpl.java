@@ -164,13 +164,35 @@ public class CharacterServiceImpl implements CharacterService {
 
     @Override
     public CharacterResponse updateHp(UUID characterPublicId, int newHp) {
-        return null;
+        CharacterEntity character=characterRepository.findBypublicId(characterPublicId)
+                .orElseThrow(()->new EntityNotFoundException("No existe el jugador"));
+        if (newHp <0){
+            newHp=0;
+        }
+        if (newHp > character.getMaxHP()){
+            newHp=character.getMaxHP();
+        }
+
+        character.setCurrentHp(newHp);
+        characterRepository.save(character);
+
+        return buildResponse(character);
     }
 
     @Override
     public CharacterResponse updateGold(UUID characterPublicId, int newGold) {
-        return null;
+
+        CharacterEntity character=characterRepository.findBypublicId(characterPublicId)
+                .orElseThrow(()->new EntityNotFoundException("No existe el jugador"));
+
+        if (newGold < 0) throw new IllegalArgumentException("El oro no puede ser negattivo");
+
+        character.setGold(newGold);
+        characterRepository.save(character);
+
+        return buildResponse(character); 
     }
+
 
 
     /// Helper para no repetir codigo al dope///////////////////
