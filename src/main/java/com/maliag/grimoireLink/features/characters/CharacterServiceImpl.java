@@ -201,7 +201,6 @@ public class CharacterServiceImpl implements CharacterService {
         }
 
         character.setCurrentHp(newHp);
-        characterRepository.save(character);
 
         return buildResponse(character);
     }

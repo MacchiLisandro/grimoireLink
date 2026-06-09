@@ -30,4 +30,16 @@ public class MonsterServiceImpl implements MonsterService{
                 monsterRepository.findByPublicId(publicId)
                         .orElseThrow(() -> new MonsterNotFoundException("Monster not found")));
     }
+
+    @Transactional
+    public void updateHp(UUID monsterId, int newHp) {
+        MonsterEntity monster = monsterRepository.findByPublicId(monsterId)
+                .orElseThrow(() -> new MonsterNotFoundException("Monster not found"));
+        if (newHp <= 0) {
+            monster.setCurrentHp(0);
+            monster.setIsAlive(false);
+        } else {
+            monster.setCurrentHp(newHp);
+        }
+    }
 }
