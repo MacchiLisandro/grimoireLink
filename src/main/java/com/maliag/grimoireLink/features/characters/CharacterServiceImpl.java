@@ -20,6 +20,7 @@ import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -44,11 +45,20 @@ public class CharacterServiceImpl implements CharacterService {
     @Transactional
     public CharacterResponse createCharacter(CharacterCreateRequest request,
                                              UUID publicCampaingId){
-        ///String username=SecurityContextHolder.blablabla
+       String username = SecurityContextHolder
+               .getContext()
+                .getAuthentication()
+                .getName();
 
         UsersXCampaignEntity member=usersXCampaignRepository
-                .findFirstByCampaign_PublicId(publicCampaingId)
+                .findByUser_Credentials_UsernameAndCampaign_PublicId(username,publicCampaingId)
                 .orElseThrow(()-> new EntityNotFoundException("No se encontro  jugador con la campaña"));
+
+        boolean isAlive=characterRepository.existsByUsersXCampaignEntityAndStatus(member,CharacterStatus.ALIVE);
+
+        if (isAlive){
+            throw  new EntityNotFoundException("No puede tener mas de un personaje vivo a la vez");
+        }
 
         BackgroundEntity background=backgroundRepository
                 .findBybackgroundIndex(request.getBackgroundIndex())
@@ -109,9 +119,18 @@ public class CharacterServiceImpl implements CharacterService {
     @Transactional
     public CharacterResponse getCharacterById(UUID CharacterPublicId) {
 
+        String username=SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
         CharacterEntity character=characterRepository.
                 findBypublicId(CharacterPublicId)
                 .orElseThrow(()->new EntityNotFoundException("Personaje no encontrado"));
+
+        UUID publicCampaing=character.getUsersXCampaignEntity().getCampaign().getPublicId();
+
+        usersXCampaignRepository.findByUser_Credentials_UsernameAndCampaign_PublicId(username,publicCampaing)
+                .orElseThrow(()->new EntityNotFoundException("No"));
 
         List<SpellsXCharacterEntity> spells= spellsXCharacterRepository
                 .findByCharacter(character);
@@ -127,7 +146,12 @@ public class CharacterServiceImpl implements CharacterService {
     }
 
     @Override
+    @Transactional
     public List<CharacterResponse> getCharacterByCampaing(UUID campaignPublicId) {
+
+        String username=SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
 
         List<CharacterEntity>characters=characterRepository
                 .findByUsersXCampaignEntity_Campaign_PublicId(campaignPublicId);
@@ -160,6 +184,14 @@ public class CharacterServiceImpl implements CharacterService {
     @Override
     public void deleteCharacter(UUID characterPublicId) {
 
+        String username=SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        CharacterEntity character = characterRepository.findBypublicId(characterPublicId)
+                .orElseThrow(()->new EntityNotFoundException("Error, notfound"));
+
+        character.setStatus(CharacterStatus.DEAD);
     }
 
     @Override

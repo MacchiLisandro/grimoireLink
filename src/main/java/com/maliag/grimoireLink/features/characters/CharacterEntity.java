@@ -28,8 +28,8 @@ public class CharacterEntity {
     @Column(name = "public_id",nullable = false,unique = true,updatable = false)
     private UUID publicId;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "uxc_id",nullable = false,unique = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "uxc_id", nullable = false)
     private UsersXCampaignEntity usersXCampaignEntity;
 
     @NotBlank
@@ -77,6 +77,7 @@ public class CharacterEntity {
 
     @Builder.Default
     private Integer gold = 0;
+
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
