@@ -1,9 +1,9 @@
 package com.maliag.grimoireLink.features.encounter.dto;
 
 import com.maliag.grimoireLink.features.characters.dto.CharacterResponse;
-import com.maliag.grimoireLink.features.encounter.EncounterDifficulty;
-import com.maliag.grimoireLink.features.encounter.EncounterStatus;
-import com.maliag.grimoireLink.features.encounter.EncounterType;
+import com.maliag.grimoireLink.features.encounter.enums.EncounterDifficulty;
+import com.maliag.grimoireLink.features.encounter.enums.EncounterStatus;
+import com.maliag.grimoireLink.features.encounter.enums.EncounterType;
 import com.maliag.grimoireLink.features.monsters.dtos.MonsterResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

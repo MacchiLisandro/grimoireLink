@@ -1,6 +1,6 @@
 package com.maliag.grimoireLink.features.users.Credentials;
 
-import com.maliag.grimoireLink.features.users.UserEntity;
+import com.maliag.grimoireLink.features.users.models.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
