@@ -7,8 +7,9 @@ import com.maliag.grimoireLink.features.encounter.models.EncounterEntity;
 import com.maliag.grimoireLink.features.monsters.mappers.MonsterMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring", uses = {CharacterSummaryMapper.class, MonsterMapper.class})
+@Mapper(componentModel = "spring", uses = {CharacterSummaryMapper.class, MonsterMapper.class}, unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface EncounterMapper {
     EncounterResponse toResponse(EncounterEntity encounter);
     @Mapping(target = "publicId", ignore = true)

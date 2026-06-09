@@ -8,7 +8,6 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
-    @Mapping(target = "password", ignore = true)
     @Mapping(target = "usersXCampaign", ignore = true)
     @Mapping(target = "credentials", ignore = true)
     UserEntity registerToEntity (UserRegisterRequest request);
