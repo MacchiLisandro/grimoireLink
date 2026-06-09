@@ -167,6 +167,7 @@ public class CharacterServiceImpl implements CharacterService {
 
     }
 
+    @Transactional
     @Override
     public CharacterResponse updateHp(UUID characterPublicId, int newHp) {
         CharacterEntity character=characterRepository.findBypublicId(characterPublicId)
@@ -179,7 +180,6 @@ public class CharacterServiceImpl implements CharacterService {
         }
 
         character.setCurrentHp(newHp);
-        characterRepository.save(character);
 
         return buildResponse(character);
     }

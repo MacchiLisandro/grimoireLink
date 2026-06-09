@@ -63,8 +63,8 @@ public class EncounterServiceImpl implements EncounterService {
         encounter.getCharacters().stream()
                 .filter(x -> x.getPublicId().equals(characterId))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Character not in encounter"))
-                .setCurrentHp(newHp);
+                .orElseThrow(() -> new RuntimeException("Character not in encounter"));
+        characterService.updateHp(characterId, newHp);
         return encounterMapper.toResponse(encounter);
     }
 
@@ -75,8 +75,8 @@ public class EncounterServiceImpl implements EncounterService {
         encounter.getMonsters().stream()
                 .filter(x -> x.getPublicId().equals(monsterId))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Monster not in encounter"))
-                .setCurrentHp(newHp);
+                .orElseThrow(() -> new RuntimeException("Monster not in encounter"));
+        monsterService.updateHp(monsterId, newHp);
         return encounterMapper.toResponse(encounter);
     }
 

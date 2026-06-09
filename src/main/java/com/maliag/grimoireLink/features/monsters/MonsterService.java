@@ -7,4 +7,5 @@ public interface MonsterService {
     MonsterEntity createMonsterFromApi (String index);
     MonsterResponse getMonsterFromApi(String index);
     MonsterResponse getByPublicId(UUID publicId);
+    void updateHp(UUID monsterId, int newHp);
 }
