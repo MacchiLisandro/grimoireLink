@@ -1,8 +1,7 @@
 package com.maliag.grimoireLink.features.encounter.dto;
 
-import com.maliag.grimoireLink.features.encounter.EncounterDifficulty;
-import com.maliag.grimoireLink.features.encounter.EncounterStatus;
-import com.maliag.grimoireLink.features.encounter.EncounterType;
+import com.maliag.grimoireLink.features.encounter.enums.EncounterDifficulty;
+import com.maliag.grimoireLink.features.encounter.enums.EncounterType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
