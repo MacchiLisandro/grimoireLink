@@ -3,6 +3,7 @@ package com.maliag.grimoireLink.features.encounter;
 import com.maliag.grimoireLink.features.characters.CharacterService;
 import com.maliag.grimoireLink.features.encounter.dto.EncounterRequest;
 import com.maliag.grimoireLink.features.encounter.dto.EncounterResponse;
+import com.maliag.grimoireLink.features.encounter.exceptions.CharacterAlreadyInEncounterException;
 import com.maliag.grimoireLink.features.encounter.exceptions.EncounterNotFoundException;
 import com.maliag.grimoireLink.features.monsters.MonsterService;
 import lombok.RequiredArgsConstructor;
@@ -41,18 +42,23 @@ public class EncounterServiceImpl implements EncounterService {
     }
 
     @Transactional
-    public EncounterResponse addCharacter (UUID encounterId, UUID characterId){
+    public EncounterResponse addCharacter(UUID encounterId, UUID characterId) {
         EncounterEntity encounter = encounterRepository.findByPublicId(encounterId)
                 .orElseThrow(() -> new EncounterNotFoundException("Encounter not found"));
+        boolean alreadyInEncounter = encounter.getCharacters().stream()
+                .anyMatch(c -> c.getPublicId().equals(characterId));
+        if (alreadyInEncounter) {
+            throw new CharacterAlreadyInEncounterException("Character already in encounter");
+        }
         encounter.getCharacters().add(characterService.getCharacterByPublicId(characterId));
         return encounterMapper.toResponse(encounter);
     }
 
     @Transactional
-    public EncounterResponse addMonster (UUID encounterId, String monstruoId){
+    public EncounterResponse addMonster(UUID encounterId, String monsterId) {
         EncounterEntity encounter = encounterRepository.findByPublicId(encounterId)
                 .orElseThrow(() -> new EncounterNotFoundException("Encounter not found"));
-        encounter.getMonsters().add(monsterService.createMonsterFromApi(monstruoId));
+        encounter.getMonsters().add(monsterService.createMonsterFromApi(monsterId));
         return encounterMapper.toResponse(encounter);
     }
 

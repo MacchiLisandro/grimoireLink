@@ -1,6 +1,8 @@
 package com.maliag.grimoireLink.features.users.exceptions;
 
-public class UserNotRegisteredOrPasswordIncorrectException extends RuntimeException {
+import com.maliag.grimoireLink.common.exceptions.UnauthorizedException;
+
+public class UserNotRegisteredOrPasswordIncorrectException extends UnauthorizedException {
     public UserNotRegisteredOrPasswordIncorrectException(String message) {
         super(message);
     }
