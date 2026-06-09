@@ -16,9 +16,9 @@ import java.util.UUID;
 public class MonsterController {
     private final MonsterService monsterService;
 
-    @PostMapping("/{id}")
-    public ResponseEntity<MonsterResponse> postMonsterFromApi (@PathVariable String id){
-        return ResponseEntity.status(HttpStatus.CREATED).body(monsterService.createMonsterFromApi(id));
+    @GetMapping("/api/{id}")
+    public ResponseEntity<MonsterResponse> getMonsterFromApi(@PathVariable String id){
+        return ResponseEntity.ok().body(monsterService.getMonsterFromApi(id));
     }
 
     @GetMapping("/{id}")
