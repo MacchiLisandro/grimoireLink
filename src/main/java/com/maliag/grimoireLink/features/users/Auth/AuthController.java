@@ -19,17 +19,19 @@ public class AuthController {
 
     private final AuthService authService;
     private final UserService userService;
-    private final JwtService jwtService;
-
-    @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest authRequest) {
-        UserDetails user = authService.authenticate(authRequest);
-        String token = jwtService.generateToken(user);
-        return ResponseEntity.ok(new AuthResponse(token));
-    }
 
     @PostMapping("/register")
     public ResponseEntity<UserResponse> register(@RequestBody UserRegisterRequest request) {
         return new ResponseEntity<>(userService.register(request), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest authRequest) {
+        return ResponseEntity.ok(authService.authenticate(authRequest));
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthResponse> refresh(@RequestBody RefreshTokenRequest request) {
+        return ResponseEntity.ok(authService.refreshAccessToken(request.getRefreshToken()));
     }
 }

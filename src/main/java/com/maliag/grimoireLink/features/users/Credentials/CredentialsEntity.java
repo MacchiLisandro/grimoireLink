@@ -34,6 +34,9 @@ public class CredentialsEntity implements UserDetails {
     @JoinColumn(name = "user_id", referencedColumnName = "id", unique = true)
     private UserEntity user;
 
+    @Column(name = "refresh_token", length = 2048, unique = true)
+    private String refreshToken;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return new HashSet<>();
