@@ -15,4 +15,5 @@ public interface CampaignService {
     CampaignResponse createCampaign(CampaignRequest request);
     CampaignResponse updateCampaign(UUID publicId, UpdateCampaignRequest request);
     void deleteCampaign(UUID publicId);
+    CampaignResponse joinCampaign(String inviteCode);
 }

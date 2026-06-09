@@ -10,4 +10,6 @@ import java.util.UUID;
 public interface CampaignRepository extends JpaRepository<CampaignEntity, Long> {
     Optional<CampaignEntity> findByPublicId(UUID publicId);
     Boolean existsByInviteCode(String inviteCode);
+
+    Optional<CampaignEntity> findByInviteCode(String inviteCode);
 }

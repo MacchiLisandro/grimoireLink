@@ -43,6 +43,7 @@ public class CharacterMapper {
                 .strengh(character.getStrength())
                 .dexterity(character.getDexterity())
                 .intelligence(character.getIntelligence())
+                .constitution(character.getConstitution())
                 .wisdom(character.getWisdom())
                 .charisma(character.getCharisma())
                 /// aca usamos el helper juas
@@ -51,6 +52,7 @@ public class CharacterMapper {
                 .wisdomMod(modifier(character.getWisdom()))
                 .charismaMod(modifier(character.getCharisma()))
                 .intelligenceMod(modifier(character.getIntelligence()))
+                .constitutionMod(modifier(character.getConstitution()))
 
                 /// Items, Hechizos,Features del personaje
                 .knowSpells(mapSpells(spells))

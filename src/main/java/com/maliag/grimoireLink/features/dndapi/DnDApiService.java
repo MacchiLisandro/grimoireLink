@@ -100,7 +100,7 @@ public class DnDApiService {
 
     public DndReference getRaceByIndex(String index){
         return restClient.get()
-                .uri("/api/2014/races/{index}")
+                .uri("/api/2014/races/{index}",index)
                 .retrieve()
                 .body(DndReference.class);
     }
