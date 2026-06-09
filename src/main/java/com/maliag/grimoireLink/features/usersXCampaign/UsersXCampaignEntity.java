@@ -1,7 +1,6 @@
 package com.maliag.grimoireLink.features.usersXCampaign;
 
 import com.maliag.grimoireLink.features.campaign.CampaignEntity;
-import com.maliag.grimoireLink.features.users.Role;
 import com.maliag.grimoireLink.features.users.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;

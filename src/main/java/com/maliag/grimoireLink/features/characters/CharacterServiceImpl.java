@@ -20,6 +20,7 @@ import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -44,11 +45,20 @@ public class CharacterServiceImpl implements CharacterService {
     @Transactional
     public CharacterResponse createCharacter(CharacterCreateRequest request,
                                              UUID publicCampaingId){
-        ///String username=SecurityContextHolder.blablabla
+       String username = SecurityContextHolder
+               .getContext()
+                .getAuthentication()
+                .getName();
 
         UsersXCampaignEntity member=usersXCampaignRepository
-                .findFirstByCampaign_PublicId(publicCampaingId)
+                .findByUser_Credentials_UsernameAndCampaign_PublicId(username,publicCampaingId)
                 .orElseThrow(()-> new EntityNotFoundException("No se encontro  jugador con la campaña"));
+
+        boolean isAlive=characterRepository.existsByUsersXCampaignEntityAndStatus(member,CharacterStatus.ALIVE);
+
+        if (isAlive){
+            throw  new EntityNotFoundException("No puede tener mas de un personaje vivo a la vez");
+        }
 
         BackgroundEntity background=backgroundRepository
                 .findBybackgroundIndex(request.getBackgroundIndex())
@@ -77,26 +87,10 @@ public class CharacterServiceImpl implements CharacterService {
         characterRepository.save(character);
 
         List<FeatureXCharacterEntity>features =new ArrayList<>();
-        List<DndReference>classfeature=dnDApiService.getFeaturesForClass(request.getClassIndex(),request.getLevel());
-        for (DndReference f: classfeature){
-            features.add(FeatureXCharacterEntity.builder()
-                    .character(character)
-                    .featureIndex(f.getIndex())
-                    .name(f.getName())
-                    .source("CLASS")
-                    .build());
-        }
-
-        List<DndReference>raceFeastures=
-                dnDApiService.getRaceFeatures(request.getRaceIndex());
-        for (DndReference f:raceFeastures){
-            features.add(FeatureXCharacterEntity.builder()
-                    .character(character)
-                    .featureIndex(f.getIndex())
-                    .name(f.getName())
-                    .source("RACE")
-                    .build());
-        }
+        features.addAll(buildFeatures(character,
+                dnDApiService.getFeaturesForClass(request.getClassIndex(), request.getLevel()), "CLASS"));
+        features.addAll(buildFeatures(character,
+                dnDApiService.getRaceFeatures(request.getRaceIndex()), "RACE"));
 
         featureXCharacterRepository.saveAll(features);
 
@@ -109,36 +103,39 @@ public class CharacterServiceImpl implements CharacterService {
     @Transactional
     public CharacterResponse getCharacterById(UUID CharacterPublicId) {
 
+        String username=SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
         CharacterEntity character=characterRepository.
                 findBypublicId(CharacterPublicId)
                 .orElseThrow(()->new EntityNotFoundException("Personaje no encontrado"));
 
-        List<SpellsXCharacterEntity> spells= spellsXCharacterRepository
-                .findByCharacter(character);
+        UUID publicCampaing=character.getUsersXCampaignEntity().getCampaign().getPublicId();
 
-        List<FeatureXCharacterEntity>features=featureXCharacterRepository
-                .findByCharacter(character);
+        usersXCampaignRepository.findByUser_Credentials_UsernameAndCampaign_PublicId(username,publicCampaing)
+                .orElseThrow(()->new EntityNotFoundException("No"));
 
-        List<ItemsXCharacterEntity>items=itemsXCharacterRepository
-                .findByCharacter(character);
-
-        return characterMapper.toResponse(character,spells,features,items);
-
+        return buildResponse(character);
     }
 
     @Override
+    @Transactional
     public List<CharacterResponse> getCharacterByCampaing(UUID campaignPublicId) {
+
+        String username=SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        usersXCampaignRepository.findByUser_Credentials_UsernameAndCampaign_PublicId(username,campaignPublicId)
+                .orElseThrow(()->new RuntimeException("Error, no hay acceso a la campaña"));
 
         List<CharacterEntity>characters=characterRepository
                 .findByUsersXCampaignEntity_Campaign_PublicId(campaignPublicId);
 
         List<CharacterResponse>response=new ArrayList<>();
         for (CharacterEntity character : characters){
-            List<SpellsXCharacterEntity>spells=spellsXCharacterRepository.findByCharacter(character);
-            List<FeatureXCharacterEntity>features=featureXCharacterRepository.findByCharacter(character);
-            List<ItemsXCharacterEntity>items=itemsXCharacterRepository.findByCharacter(character);
-
-            response.add(characterMapper.toResponse(character,spells,features,items));
+            response.add(buildResponse(character));
         }
         return response;
     }
@@ -147,25 +144,50 @@ public class CharacterServiceImpl implements CharacterService {
     @Transactional
     public CharacterResponse updateCharacter(UUID characterPublicId, CharacterUpdateRequest request) {
 
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
         CharacterEntity character=characterRepository.findBypublicId(characterPublicId)
                 .orElseThrow(()->new EntityNotFoundException("No existe el personaje"));
         /// fijarse si solo dejamos el nombre para cambiar jajaj
-        character.setName(request.getName());
 
+        validateAccess(character,username);
+
+        character.setName(request.getName());
         characterRepository.save(character);
 
         return buildResponse(character); 
     }
 
+    @Transactional
     @Override
     public void deleteCharacter(UUID characterPublicId) {
 
+        String username=SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        CharacterEntity character = characterRepository.findBypublicId(characterPublicId)
+                .orElseThrow(()->new EntityNotFoundException("Error, notfound"));
+
+        character.setStatus(CharacterStatus.DEAD);
+        characterRepository.save(character);
     }
 
+    @Transactional
     @Override
     public CharacterResponse updateHp(UUID characterPublicId, int newHp) {
+
+        String username=SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
         CharacterEntity character=characterRepository.findBypublicId(characterPublicId)
                 .orElseThrow(()->new EntityNotFoundException("No existe el jugador"));
+
+        validateAccess(character,username);
+
         if (newHp <0){
             newHp=0;
         }
@@ -179,13 +201,20 @@ public class CharacterServiceImpl implements CharacterService {
         return buildResponse(character);
     }
 
+    @Transactional
     @Override
     public CharacterResponse updateGold(UUID characterPublicId, int newGold) {
+
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
 
         CharacterEntity character=characterRepository.findBypublicId(characterPublicId)
                 .orElseThrow(()->new EntityNotFoundException("No existe el jugador"));
 
-        if (newGold < 0) throw new IllegalArgumentException("El oro no puede ser negattivo");
+        validateAccess(character,username);
+
+        if (newGold < 0) throw new IllegalArgumentException("El oro no puede ser negativo");
 
         character.setGold(newGold);
         characterRepository.save(character);
@@ -205,6 +234,29 @@ public class CharacterServiceImpl implements CharacterService {
                 itemsXCharacterRepository.findByCharacter(character);
 
         return characterMapper.toResponse(character, spells, features, items);
+    }
+
+    /// /////////////////////////////////////////////////////////
+    private List<FeatureXCharacterEntity> buildFeatures(
+            CharacterEntity character, List<DndReference> references, String source) {
+        List<FeatureXCharacterEntity> features = new ArrayList<>();
+        for (DndReference f : references) {
+            features.add(FeatureXCharacterEntity.builder()
+                    .character(character)
+                    .featureIndex(f.getIndex())
+                    .name(f.getName())
+                    .source(source)
+                    .build());
+        }
+        return features;
+    }
+    /// //////////////////////////////////////////////////////////
+    private void validateAccess(CharacterEntity character, String username) {
+        UUID publicCampaign = character.getUsersXCampaignEntity().getCampaign().getPublicId();
+
+        usersXCampaignRepository
+                .findByUser_Credentials_UsernameAndCampaign_PublicId(username, publicCampaign)
+                .orElseThrow(() -> new EntityNotFoundException("No tenés acceso a este personaje"));
     }
 
 
