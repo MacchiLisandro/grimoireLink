@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 
+import javax.swing.text.html.Option;
 import java.util.Optional;
 import java.util.List;
 import java.util.UUID;
@@ -21,4 +22,7 @@ public interface UsersXCampaignRepository extends JpaRepository<UsersXCampaignEn
     ///cuando implementemos security sacamos el id del usuario de ahi
     @Query("SELECT uxc.campaign FROM UsersXCampaignEntity AS uxc WHERE uxc.user.publicId = :userPublicId")
     List<CampaignEntity> findCampaignsByUserPublicId(@Param("userPublicId") UUID userPublicId);
+
+    ///Optional<UsersXCampaignEntity>findByUser_nameAndCampaign_PublicId(String username,UUID campaignPublicId);
+    Optional<UsersXCampaignEntity>findByUser_Credentials_UsernameAndCampaign_PublicId(String username, UUID publicId);
 }
