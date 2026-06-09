@@ -78,8 +78,10 @@ public class CharacterServiceImpl implements CharacterService {
                     request.getSubclassIndex()).getName();
         }
 
-        int conModifier = (int) ((request.getConstitution() -10)/2.0);
-        int maxHp=hitDice + conModifier;
+        int conModifier = Math.floorDiv(request.getConstitution() - 10, 2);
+        int avgXLvl = (hitDice / 2 ) + 1;
+        int maxHp = (hitDice + conModifier) + (request.getLevel() - 1 )
+                * (avgXLvl + conModifier);
 
         CharacterEntity character=characterMapper.toEntity(
                 request,member,background,raceName,className,subclassName,maxHp);
@@ -111,10 +113,8 @@ public class CharacterServiceImpl implements CharacterService {
                 findBypublicId(CharacterPublicId)
                 .orElseThrow(()->new EntityNotFoundException("Personaje no encontrado"));
 
-        UUID publicCampaing=character.getUsersXCampaignEntity().getCampaign().getPublicId();
 
-        usersXCampaignRepository.findByUser_Credentials_UsernameAndCampaign_PublicId(username,publicCampaing)
-                .orElseThrow(()->new EntityNotFoundException("No"));
+        validateAccess(character, username);
 
         return buildResponse(character);
     }
@@ -170,6 +170,8 @@ public class CharacterServiceImpl implements CharacterService {
 
         CharacterEntity character = characterRepository.findBypublicId(characterPublicId)
                 .orElseThrow(()->new EntityNotFoundException("Error, notfound"));
+
+        validateAccess(character,username);
 
         character.setStatus(CharacterStatus.DEAD);
         characterRepository.save(character);
