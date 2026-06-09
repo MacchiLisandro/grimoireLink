@@ -1,6 +1,8 @@
 package com.maliag.grimoireLink.features.monsters;
 
-public class MonsterNotFoundException extends RuntimeException {
+import com.maliag.grimoireLink.common.exceptions.ResourceNotFoundException;
+
+public class MonsterNotFoundException extends ResourceNotFoundException {
     public MonsterNotFoundException(String message) {
         super(message);
     }

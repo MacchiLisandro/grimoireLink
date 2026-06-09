@@ -1,6 +1,8 @@
 package com.maliag.grimoireLink.features.encounter.exceptions;
 
-public class EncounterNotFoundException extends RuntimeException {
+import com.maliag.grimoireLink.common.exceptions.ResourceNotFoundException;
+
+public class EncounterNotFoundException extends ResourceNotFoundException {
     public EncounterNotFoundException(String message) {
         super(message);
     }
