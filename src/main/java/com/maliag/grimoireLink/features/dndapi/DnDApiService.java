@@ -117,6 +117,13 @@ public class DnDApiService {
         return details.getTraits();
     }
 
+    public DndReference getSpellByIndex(String index){
+        return restClient.get()
+                .uri("/api/2014/spell/{index}",index)
+                .retrieve()
+                .body(DndReference.class);
+    }
+
 
 /// Helper para devolver los slots por nivel
     public Integer getMaxSpellsLevel(String Classindex, int characterLevel)

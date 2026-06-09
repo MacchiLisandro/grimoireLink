@@ -14,7 +14,7 @@ public class ClassDetail {
     @JsonProperty("name")
     private  String name;
 
-    @JsonProperty("hit_dice")
+    @JsonProperty("hit_die")
     private int hitdice;
 
 

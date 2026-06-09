@@ -34,6 +34,10 @@ public class ItemsXCharacterEntity {
     @Column (name = "name", nullable = false)
     private String name;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "item_type", nullable = false)
+    private ItemType itemType;
+
     @Column(name = "equipped", nullable = false)
     private Boolean equipped;
 

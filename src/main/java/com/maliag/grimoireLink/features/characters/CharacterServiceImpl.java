@@ -13,8 +13,10 @@ import com.maliag.grimoireLink.features.featuresXCharacter.FeatureXCharacterEnti
 import com.maliag.grimoireLink.features.featuresXCharacter.FeatureXCharacterRepository;
 import com.maliag.grimoireLink.features.itemsXCharacter.ItemsXCharacterEntity;
 import com.maliag.grimoireLink.features.itemsXCharacter.ItemsXCharacterRepository;
+import com.maliag.grimoireLink.features.itemsXCharacter.dto.AddItemRequest;
 import com.maliag.grimoireLink.features.spellsXCharacter.SpellsXCharacterEntity;
 import com.maliag.grimoireLink.features.spellsXCharacter.SpellsXCharacterRepository;
+import com.maliag.grimoireLink.features.spellsXCharacter.dto.AddSpellRequest;
 import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignEntity;
 import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -224,6 +226,54 @@ public class CharacterServiceImpl implements CharacterService {
         return buildResponse(character); 
     }
 
+    @Override
+    public CharacterResponse addSpell(UUID characterPublicId, AddSpellRequest request) {
+
+        String username=SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        CharacterEntity character=characterRepository.findBypublicId(characterPublicId)
+                .orElseThrow(()->new EntityNotFoundException("Character not found"));
+
+        validateAccess(character,username);
+
+        boolean equipped=spellsXCharacterRepository.existsByCharacterAndSpellIndex(character, request.getSpellIndex());
+
+        if (equipped){
+            throw new EntityNotFoundException("Error el hechizo ya existe dentro");
+        }
+
+        /// terminasr metodo
+    return  null;
+    }
+
+
+    ///  terminar metodos
+    @Override
+    public CharacterResponse removeSpell(UUID characterPublicId, UUID spellPublicId) {
+        return null;
+    }
+
+    @Override
+    public CharacterResponse togglePreparedSpell(UUID characterPublicId, UUID spellPublicId) {
+        return null;
+    }
+
+    @Override
+    public CharacterResponse addItem(UUID characterPublicId, AddItemRequest request) {
+        return null;
+    }
+
+    @Override
+    public CharacterResponse removeItem(UUID characterPublicId, UUID itemPublicId) {
+        return null;
+    }
+
+    @Override
+    public CharacterResponse toggleEquippedItem(UUID characterPublicId, UUID itemPublicId) {
+        return null;
+    }
 
 
     /// Helper para no repetir codigo al dope///////////////////
