@@ -24,8 +24,8 @@ public class MonsterEntity {
     @Column (name = "name", nullable = false)
     private String name;
 
-    @Column (name = "level", nullable = false)
-    private Integer level;
+    @Column (name = "challengeRating", nullable = false)
+    private Double challengeRating;
 
     @Column (name = "max_hp", nullable = false)
     private Integer maxHp;

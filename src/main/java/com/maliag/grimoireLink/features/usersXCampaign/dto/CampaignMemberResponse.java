@@ -1,6 +1,6 @@
 package com.maliag.grimoireLink.features.usersXCampaign.dto;
 
-import com.maliag.grimoireLink.features.users.Role;
+import com.maliag.grimoireLink.features.usersXCampaign.Role;
 import lombok.Builder;
 import lombok.Data;
 

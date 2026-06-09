@@ -169,7 +169,18 @@ public class DnDApiService {
 
     }
 
-
+    public MonsterApiResponse getMonsterByIndex(String index) {
+        return restClient.get()
+                .uri("/api/2014/monsters/{index}", index)
+                .retrieve()
+                .onStatus(
+                        status -> status.value() == 403,
+                        (request, response) -> {
+                            throw new IllegalArgumentException("Monstruo no encontente: " + index);
+                        }
+                )
+                .body(MonsterApiResponse.class);
+    }
 
 
 
