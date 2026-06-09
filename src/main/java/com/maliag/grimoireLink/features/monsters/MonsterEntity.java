@@ -13,11 +13,13 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "monsters")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class MonsterEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @EqualsAndHashCode.Include
     @Column (name = "public_id", unique = true, nullable = false, updatable = false)
     private UUID publicId;
 

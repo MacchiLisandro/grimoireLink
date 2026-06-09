@@ -119,6 +119,11 @@ public class CharacterServiceImpl implements CharacterService {
         return buildResponse(character);
     }
 
+    public CharacterEntity getCharacterByPublicId(UUID publicId){
+        return characterRepository.findBypublicId(publicId)
+                .orElseThrow(()-> new EntityNotFoundException("Personaje no encontrado"));
+    }
+
     @Override
     @Transactional
     public List<CharacterResponse> getCharacterByCampaing(UUID campaignPublicId) {
