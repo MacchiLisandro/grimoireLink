@@ -13,7 +13,7 @@ public class MonsterServiceImpl implements MonsterService{
     private final MonsterMapper monsterMapper;
     private final DnDApiService dndApiService;
 
-    public MonsterResponse CreateMonsterFromApi (String index){
+    public MonsterResponse createMonsterFromApi (String index){
         return monsterMapper.toResponse(
                 monsterRepository.save(
                         monsterMapper.toEntity(
