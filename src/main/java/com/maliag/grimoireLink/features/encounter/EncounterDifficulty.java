@@ -1,6 +1,6 @@
 package com.maliag.grimoireLink.features.encounter;
 
-public enum ChallengeRating {
+public enum EncounterDifficulty {
     EASY,
     MEDIUM,
     HARD,

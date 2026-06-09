@@ -18,11 +18,12 @@ import java.util.UUID;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class EncounterEntity {
 
-    @EqualsAndHashCode.Include
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @EqualsAndHashCode.Include
     @Column(name = "public_id", nullable = false, unique = true, updatable = false)
     private UUID publicId;
 
@@ -30,9 +31,9 @@ public class EncounterEntity {
     @Enumerated(EnumType.STRING)
     private EncounterType encounterType;
 
-    @Column(name = "challenge_rating", nullable = false)
+    @Column(name = "encounter_difficulty", nullable = false)
     @Enumerated(EnumType.STRING)
-    private ChallengeRating challengeRating;
+    private EncounterDifficulty encounterDifficulty;
 
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
@@ -59,7 +60,7 @@ public class EncounterEntity {
 
     @PrePersist
     void onCreate(){
-        if(publicId==null){
+        if(publicId==null) {
             this.publicId = UUID.randomUUID();
         }
     }

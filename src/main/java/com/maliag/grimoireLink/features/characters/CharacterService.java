@@ -15,6 +15,8 @@ public interface CharacterService {
 
     CharacterResponse getCharacterById(UUID CharacterPublicId);
 
+    CharacterEntity getCharacterByPublicId(UUID publicId);
+
     List<CharacterResponse> getCharacterByCampaing(UUID campaignPublicId);
 
     CharacterResponse updateCharacter(UUID characterPublicId,
