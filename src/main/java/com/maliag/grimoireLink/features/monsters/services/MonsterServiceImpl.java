@@ -21,7 +21,9 @@ public class MonsterServiceImpl implements MonsterService {
 
     @Transactional
     public MonsterEntity createMonsterFromApi (String index){
-        return monsterRepository.save(monsterMapper.toEntity(dndApiService.getMonsterByIndex(index)));
+        MonsterEntity monster = monsterMapper.toEntity(dndApiService.getMonsterByIndex(index));
+        monster.setCurrentHp(monster.getMaxHp());
+        return monsterRepository.save(monster);
     }
 
     @Transactional
