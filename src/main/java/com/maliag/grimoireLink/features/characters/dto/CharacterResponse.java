@@ -1,6 +1,7 @@
 package com.maliag.grimoireLink.features.characters.dto;
 
 import com.maliag.grimoireLink.features.characters.CharacterStatus;
+import com.maliag.grimoireLink.features.spellsXCharacter.dto.SpellResponse;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -48,7 +49,7 @@ public class CharacterResponse {
     private Integer intelligenceMod;
 
     /// referencias a la dndapi
-    private List<String>knowSpells;
+    private List<SpellResponse>knowSpells;
     private List<String>featureIndices;
     private List<CharacterItemResponse>items;
 

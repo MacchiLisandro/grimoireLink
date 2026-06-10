@@ -11,6 +11,7 @@ import com.maliag.grimoireLink.features.dndapi.dto.ClassDetail;
 import com.maliag.grimoireLink.features.dndapi.dto.DndReference;
 import com.maliag.grimoireLink.features.featuresXCharacter.FeatureXCharacterEntity;
 import com.maliag.grimoireLink.features.featuresXCharacter.FeatureXCharacterRepository;
+import com.maliag.grimoireLink.features.itemsXCharacter.ItemType;
 import com.maliag.grimoireLink.features.itemsXCharacter.ItemsXCharacterEntity;
 import com.maliag.grimoireLink.features.itemsXCharacter.ItemsXCharacterRepository;
 import com.maliag.grimoireLink.features.itemsXCharacter.dto.AddItemRequest;
@@ -22,6 +23,7 @@ import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.hibernate.cache.spi.support.AbstractReadWriteAccess.Item;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -225,7 +227,7 @@ public class CharacterServiceImpl implements CharacterService {
 
         return buildResponse(character); 
     }
-
+/// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
     public CharacterResponse addSpell(UUID characterPublicId, AddSpellRequest request) {
 
@@ -243,36 +245,150 @@ public class CharacterServiceImpl implements CharacterService {
         if (equipped){
             throw new EntityNotFoundException("Error el hechizo ya existe dentro");
         }
+        String spellname= dnDApiService.getSpellByIndex(request.getSpellIndex()).getName();
 
-        /// terminasr metodo
-    return  null;
+        SpellsXCharacterEntity spell =SpellsXCharacterEntity.builder()
+                .character(character)
+                .spellIndex(request.getSpellIndex())
+                .name(spellname)
+                .build();
+
+        spellsXCharacterRepository.save(spell);
+
+        return buildResponse(character);
     }
 
 
     ///  terminar metodos
     @Override
+    //@Transactional? dirty check o no?
     public CharacterResponse removeSpell(UUID characterPublicId, UUID spellPublicId) {
-        return null;
+
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        CharacterEntity character=characterRepository.findBypublicId(characterPublicId)
+                .orElseThrow(()->new EntityNotFoundException("Character not found"));
+
+        validateAccess(character,username);
+        SpellsXCharacterEntity spells=spellsXCharacterRepository.findByPublicId(spellPublicId)
+                .orElseThrow(()-> new EntityNotFoundException("Spell not exist"));
+
+        if (!spells.getCharacter().getId().equals(character.getId())){
+            throw new IllegalArgumentException("No le pertenece el hechizo");
+        }
+        spellsXCharacterRepository.delete(spells);
+
+        return buildResponse(character);
     }
 
     @Override
     public CharacterResponse togglePreparedSpell(UUID characterPublicId, UUID spellPublicId) {
-        return null;
+
+    String username=SecurityContextHolder.getContext()
+            .getAuthentication()
+            .getName();
+
+    CharacterEntity character=characterRepository.findBypublicId(characterPublicId)
+            .orElseThrow(()-> new EntityNotFoundException("Character not found"));
+
+    validateAccess(character,username);
+
+    SpellsXCharacterEntity spell=spellsXCharacterRepository.findByPublicId(spellPublicId)
+            .orElseThrow(()->new EntityNotFoundException("Spell not exist"));
+
+        if (!spell.getCharacter().getId().equals(character.getId())) {
+            throw new IllegalArgumentException("No le pertenece el hechizo");
+        }
+        spell.setPrepared(!spell.isPrepared());
+        spellsXCharacterRepository.save(spell);
+
+        return buildResponse(character);
+
     }
 
     @Override
     public CharacterResponse addItem(UUID characterPublicId, AddItemRequest request) {
-        return null;
+
+        String username=SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        CharacterEntity character=characterRepository.findBypublicId(characterPublicId)
+                .orElseThrow(()->new EntityNotFoundException("Character not found"));
+
+        validateAccess(character,username);
+
+        boolean alreadyHave=itemsXCharacterRepository
+                .existsByCharacterAndItemIndexAndItemType(character,request.getItemIndex(),request.getItemType());
+
+        if (alreadyHave)throw new IllegalArgumentException("character already have this item");
+
+        String itemname=resolveItemName(request.getItemIndex(),request.getItemType());
+
+        ItemsXCharacterEntity item= ItemsXCharacterEntity.builder()
+                .character(character)
+                .itemIndex(request.getItemIndex())
+                .name(itemname)
+                .itemType(request.getItemType())
+                .build();
+
+        itemsXCharacterRepository.save(item);
+
+        return buildResponse(character);
+
     }
 
     @Override
     public CharacterResponse removeItem(UUID characterPublicId, UUID itemPublicId) {
-        return null;
+
+        String username=SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        CharacterEntity character=characterRepository.findBypublicId(characterPublicId)
+                .orElseThrow(()->new EntityNotFoundException("Character not found"));
+
+        validateAccess(character,username);
+
+        ItemsXCharacterEntity item=itemsXCharacterRepository.findByPublicId(itemPublicId)
+                .orElseThrow(()->new EntityNotFoundException("item not found"));
+
+        if (!item.getCharacter().getId().equals(character.getId())){
+            throw new IllegalArgumentException("No le pertenece el item");
+        }
+        itemsXCharacterRepository.delete(item);
+
+        return buildResponse(character);
+
+
     }
 
     @Override
     public CharacterResponse toggleEquippedItem(UUID characterPublicId, UUID itemPublicId) {
-        return null;
+
+        String username=SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        CharacterEntity character=characterRepository.findBypublicId(characterPublicId)
+                .orElseThrow(()->new EntityNotFoundException("character not found"));
+
+        validateAccess(character,username);
+
+        ItemsXCharacterEntity item=itemsXCharacterRepository.findByPublicId(itemPublicId)
+                .orElseThrow(()->new EntityNotFoundException("item not exist"));
+
+        if (!item.getCharacter().getId().equals(character.getId())) {
+            throw new IllegalArgumentException("No le pertenece el item");
+        }
+        item.setEquipped(!item.getEquipped());
+        itemsXCharacterRepository.save(item);
+
+        return buildResponse(character);
+
+
     }
 
 
@@ -311,5 +427,11 @@ public class CharacterServiceImpl implements CharacterService {
                 .orElseThrow(() -> new EntityNotFoundException("No tenés acceso a este personaje"));
     }
 
-
+        /// ////////////////para resolver que tipo de items es lo que trae////////////////////////////////////////////
+        private String resolveItemName(String itemIndex, ItemType itemType) {
+            if (itemType == ItemType.EQUIPMENT) {
+                return dnDApiService.getEquipmentByIndex(itemIndex).getName();
+            }
+            return dnDApiService.getMagicItemByIndex(itemIndex).getName();
+        }
 }

@@ -28,11 +28,12 @@ public interface CharacterService {
     CharacterResponse updateGold(UUID characterPublicId, int newGold);
 
 
+    ///spells
     CharacterResponse addSpell(UUID characterPublicId, AddSpellRequest request);
     CharacterResponse removeSpell(UUID characterPublicId, UUID spellPublicId);
     CharacterResponse togglePreparedSpell(UUID characterPublicId, UUID spellPublicId);
 
-    // Items
+    /// Items
     CharacterResponse addItem(UUID characterPublicId, AddItemRequest request);
     CharacterResponse removeItem(UUID characterPublicId, UUID itemPublicId);
     CharacterResponse toggleEquippedItem(UUID characterPublicId, UUID itemPublicId);

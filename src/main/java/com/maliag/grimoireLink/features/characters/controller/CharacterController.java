@@ -4,9 +4,14 @@ import com.maliag.grimoireLink.features.characters.CharacterService;
 import com.maliag.grimoireLink.features.characters.dto.CharacterCreateRequest;
 import com.maliag.grimoireLink.features.characters.dto.CharacterResponse;
 import com.maliag.grimoireLink.features.characters.dto.CharacterUpdateRequest;
+import com.maliag.grimoireLink.features.itemsXCharacter.ItemsXCharacterEntity;
+import com.maliag.grimoireLink.features.itemsXCharacter.dto.AddItemRequest;
+import com.maliag.grimoireLink.features.spellsXCharacter.dto.AddSpellRequest;
+import com.maliag.grimoireLink.features.spellsXCharacter.dto.SpellResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.parameters.P;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +25,7 @@ import java.util.UUID;
 public class CharacterController {
 
     private final CharacterService characterService;
-
+/// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CharacterResponse createCharacter(@Valid @RequestBody CharacterCreateRequest request,
@@ -49,8 +54,11 @@ public class CharacterController {
     public void deleteCharacter(@PathVariable UUID characterId){
         characterService.deleteCharacter(characterId);
     }
+/// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    @PatchMapping("/{characterId}/hp")
+
+
+@PatchMapping("/{characterId}/hp")
     public CharacterResponse updateHp(@PathVariable UUID characterId,
                                       @RequestParam int newHp){
         return characterService.updateHp(characterId, newHp);
@@ -61,6 +69,49 @@ public class CharacterController {
                                         @RequestParam int newGold){
         return characterService.updateGold(characterId, newGold);
     }
+
+    @PostMapping("/{characterId}/spell")
+    @ResponseStatus(HttpStatus.CREATED)
+    public CharacterResponse addSpell(@PathVariable UUID characterId,
+                                      @Valid @RequestBody AddSpellRequest request){
+    return  characterService.addSpell(characterId,request);
+    }
+
+    /// devuelvo o no?
+    @DeleteMapping("/{characterId}/spell/{spellId}")
+    @ResponseStatus(HttpStatus.OK)
+    public CharacterResponse removeSpell(@PathVariable UUID characterId,
+                                         @PathVariable UUID spellid){
+
+        return characterService.removeSpell(characterId,spellid);
+    }
+
+    @PatchMapping("/{characterId}/spells/{spellId}/prepare")
+    public CharacterResponse togglePreparedSpell(@PathVariable UUID characterId,
+                                                 @PathVariable UUID spellId){
+        return characterService.togglePreparedSpell(characterId, spellId);
+    }
+
+    @PostMapping("/{characterId}/items")
+    @ResponseStatus(HttpStatus.CREATED)
+    public CharacterResponse addItem(@PathVariable UUID characterId,
+                                     @Valid @RequestBody AddItemRequest request){
+        return characterService.addItem(characterId, request);
+    }
+
+    @DeleteMapping("/{characterId}/items/{itemId}")
+    public CharacterResponse removeItem(@PathVariable UUID characterId,
+                                        @PathVariable UUID itemId){
+        return characterService.removeItem(characterId, itemId);
+    }
+
+    @PatchMapping("/{characterId}/items/{itemId}/equip")
+    public CharacterResponse toggleEquippedItem(@PathVariable UUID characterId,
+                                                @PathVariable UUID itemId){
+        return characterService.toggleEquippedItem(characterId, itemId);
+    }
+
+
 
 
 }
