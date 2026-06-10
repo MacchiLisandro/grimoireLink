@@ -58,4 +58,10 @@ public class CampaignController {
     public void deleteCampaign(@PathVariable UUID publicId){
         service.deleteCampaign(publicId);
     }
+
+    @PostMapping("/join")
+    @ResponseStatus(HttpStatus.OK)
+    public CampaignResponse joinCampaign(@RequestParam String inviteCode){
+        return service.joinCampaign(inviteCode);
+    }
 }

@@ -7,6 +7,7 @@ import com.maliag.grimoireLink.features.characters.dto.CharacterResponse;
 import com.maliag.grimoireLink.features.featuresXCharacter.FeatureXCharacterEntity;
 import com.maliag.grimoireLink.features.itemsXCharacter.ItemsXCharacterEntity;
 import com.maliag.grimoireLink.features.spellsXCharacter.SpellsXCharacterEntity;
+import com.maliag.grimoireLink.features.spellsXCharacter.dto.SpellResponse;
 import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignEntity;
 import org.springframework.stereotype.Component;
 
@@ -43,6 +44,7 @@ public class CharacterMapper {
                 .strengh(character.getStrength())
                 .dexterity(character.getDexterity())
                 .intelligence(character.getIntelligence())
+                .constitution(character.getConstitution())
                 .wisdom(character.getWisdom())
                 .charisma(character.getCharisma())
                 /// aca usamos el helper juas
@@ -51,6 +53,7 @@ public class CharacterMapper {
                 .wisdomMod(modifier(character.getWisdom()))
                 .charismaMod(modifier(character.getCharisma()))
                 .intelligenceMod(modifier(character.getIntelligence()))
+                .constitutionMod(modifier(character.getConstitution()))
 
                 /// Items, Hechizos,Features del personaje
                 .knowSpells(mapSpells(spells))
@@ -139,13 +142,20 @@ public class CharacterMapper {
         return resultado;
     }
 
-    private List<String>mapSpells(List<SpellsXCharacterEntity>spells){
-        List<String>resultado=new ArrayList<>();
+    private List<SpellResponse>mapSpells(List<SpellsXCharacterEntity>spells){
+        List<SpellResponse>resultado=new ArrayList<>();
         if (spells == null)return resultado;
 
         for (SpellsXCharacterEntity spell: spells){
-            resultado.add(spell.getName());
+            SpellResponse dto =SpellResponse.builder()
+                    .publicId(spell.getPublicId())
+                    .name(spell.getName())
+                    .prepared(spell.isPrepared())
+                    .build();
+
+            resultado.add(dto);
         }
+
         return  resultado;
     }
 

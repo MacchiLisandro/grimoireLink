@@ -33,10 +33,14 @@ public class SpellsXCharacterEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "prepared", nullable = false)
+    private boolean prepared;
+
     @PrePersist
     void onCreate() {
         if (publicId == null) {
             this.publicId = UUID.randomUUID();
         }
+       this.prepared=false;
     }
 }
