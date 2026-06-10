@@ -211,9 +211,11 @@ public class CharacterServiceImpl implements CharacterService {
 
         validateAccess(character,username);
 
-        if (newHp <0){
+        if (newHp <=0){
             newHp=0;
+            character.setStatus(CharacterStatus.UNCONSCIOUS);
         }
+
         if (newHp > character.getMaxHp()){
             newHp=character.getMaxHp();
         }
