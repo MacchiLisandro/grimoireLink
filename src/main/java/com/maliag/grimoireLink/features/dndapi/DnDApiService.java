@@ -100,7 +100,7 @@ public class DnDApiService {
 
     public DndReference getRaceByIndex(String index){
         return restClient.get()
-                .uri("/api/2014/races/{index}")
+                .uri("/api/2014/races/{index}",index)
                 .retrieve()
                 .body(DndReference.class);
     }
@@ -115,6 +115,27 @@ public class DnDApiService {
         }
 
         return details.getTraits();
+    }
+
+    public DndReference getSpellByIndex(String index){
+        return restClient.get()
+                .uri("/api/2014/spells/{index}",index)
+                .retrieve()
+                .body(DndReference.class);
+    }
+
+    public DndReference getEquipmentByIndex(String index){
+        return restClient.get()
+                .uri("/api/2014/equipment/{index}",index)
+                .retrieve()
+                .body(DndReference.class);
+    }
+
+    public DndReference getMagicItemByIndex(String index){
+        return restClient.get()
+                .uri("/api/2014/magic-items/{index}",index)
+                .retrieve()
+                .body(DndReference.class);
     }
 
 

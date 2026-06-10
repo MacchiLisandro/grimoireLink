@@ -2,6 +2,7 @@ package com.maliag.grimoireLink.features.usersXCampaign;
 
 import com.maliag.grimoireLink.features.campaign.CampaignEntity;
 import com.maliag.grimoireLink.features.characters.CharacterEntity;
+import com.maliag.grimoireLink.features.users.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -25,4 +26,6 @@ public interface UsersXCampaignRepository extends JpaRepository<UsersXCampaignEn
 
     ///Optional<UsersXCampaignEntity>findByUser_nameAndCampaign_PublicId(String username,UUID campaignPublicId);
     Optional<UsersXCampaignEntity>findByUser_Credentials_UsernameAndCampaign_PublicId(String username, UUID publicId);
+
+    boolean existsByUserAndCampaign(UserEntity user, CampaignEntity campaign);
 }

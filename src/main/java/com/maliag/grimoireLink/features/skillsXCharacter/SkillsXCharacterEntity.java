@@ -34,7 +34,7 @@ public class SkillsXCharacterEntity {
 
     @Column(name = "proficiency", nullable = false)
     private Integer proficiency;
-
+    @PrePersist
     void onCreate(){
         if(publicId==null){
             this.publicId = UUID.randomUUID();

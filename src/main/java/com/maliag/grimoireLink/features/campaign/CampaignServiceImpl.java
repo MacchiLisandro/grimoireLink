@@ -3,11 +3,16 @@ package com.maliag.grimoireLink.features.campaign;
 import com.maliag.grimoireLink.features.campaign.dto.CampaignRequest;
 import com.maliag.grimoireLink.features.campaign.dto.CampaignResponse;
 import com.maliag.grimoireLink.features.campaign.dto.UpdateCampaignRequest;
+import com.maliag.grimoireLink.features.users.UserEntity;
+import com.maliag.grimoireLink.features.users.UserRepository;
+import com.maliag.grimoireLink.features.usersXCampaign.Role;
+import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignEntity;
 import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignMapper;
 import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignRepository;
 import com.maliag.grimoireLink.features.usersXCampaign.dto.CampaignMemberResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +29,8 @@ public class CampaignServiceImpl implements CampaignService{
     private final CampaignMapper mapper;
     private final UsersXCampaignRepository uxcRepository;
     private final UsersXCampaignMapper uxcMapper;
+
+    private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
     public CampaignEntity findByPublicId(UUID publicId){
@@ -93,4 +100,34 @@ public class CampaignServiceImpl implements CampaignService{
         ///usar baja logica?
         repository.delete(campaign);
     }
+
+    @Transactional
+    public CampaignResponse joinCampaign(String inviteCode) {
+
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        UserEntity user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+
+        CampaignEntity campaign = repository.findByInviteCode(inviteCode)
+                .orElseThrow(() -> new EntityNotFoundException("Código de invitación inválido"));
+
+        boolean alreadyMember = uxcRepository.existsByUserAndCampaign(user, campaign);
+        if (alreadyMember) {
+            throw new IllegalStateException("Ya sos miembro de esta campaña");
+        }
+
+        UsersXCampaignEntity membership = UsersXCampaignEntity.builder()
+                .user(user)
+                .campaign(campaign)
+                .role(Role.PLAYER)
+                .build();
+
+        uxcRepository.save(membership);
+
+        return mapper.toResponse(campaign);
+    }
+
+
+
 }

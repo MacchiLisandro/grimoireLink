@@ -1,12 +1,11 @@
 package com.maliag.grimoireLink.features.characters.dto;
 
 import com.maliag.grimoireLink.features.characters.CharacterStatus;
-import jakarta.validation.constraints.NotBlank;
+import com.maliag.grimoireLink.features.spellsXCharacter.dto.SpellResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.boot.internal.Abstract;
 
 import java.util.List;
 import java.util.UUID;
@@ -48,7 +47,7 @@ public class CharacterResponse {
     private Integer intelligenceMod;
 
     /// referencias a la dndapi
-    private List<String>knowSpells;
+    private List<SpellResponse>knowSpells;
     private List<String>featureIndices;
     private List<CharacterItemResponse>items;
 
