@@ -52,5 +52,8 @@ public class ItemsXCharacterEntity {
         if (equipped == null) {
             equipped = false;
         }
+        if (quantity == null){
+            quantity=1;
+        }
     }
 }

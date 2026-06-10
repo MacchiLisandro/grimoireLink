@@ -165,6 +165,8 @@ public class CharacterMapper {
 
         for (ItemsXCharacterEntity item : items){
             CharacterItemResponse dto= CharacterItemResponse.builder()
+                    .publicId(item.getPublicId())
+                    .itemIndex(item.getItemIndex())
                     .name(item.getName())
                     .quantity(item.getQuantity())
                     .equipped(item.getEquipped())
