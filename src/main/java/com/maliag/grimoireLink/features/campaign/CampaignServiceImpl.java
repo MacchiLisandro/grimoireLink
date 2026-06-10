@@ -4,6 +4,7 @@ import com.maliag.grimoireLink.features.campaign.dto.CampaignRequest;
 import com.maliag.grimoireLink.features.campaign.dto.CampaignResponse;
 import com.maliag.grimoireLink.features.campaign.dto.UpdateCampaignRequest;
 
+import com.maliag.grimoireLink.features.campaign.exceptions.CampaignNotFoundException;
 import com.maliag.grimoireLink.features.encounter.dto.EncounterResponse;
 import com.maliag.grimoireLink.features.users.models.UserEntity;
 import com.maliag.grimoireLink.features.users.repositories.UserRepository;
@@ -39,7 +40,7 @@ public class CampaignServiceImpl implements CampaignService{
     @Transactional(readOnly = true)
     public CampaignEntity findByPublicId(UUID publicId){
         return repository.findByPublicId(publicId)
-                .orElseThrow(EntityNotFoundException::new);
+                .orElseThrow(()-> new CampaignNotFoundException("Campaign not found"));
     }
 
     @Override
