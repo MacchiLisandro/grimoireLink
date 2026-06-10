@@ -1,5 +1,7 @@
 package com.maliag.grimoireLink.features.dndapi;
+import com.maliag.grimoireLink.common.exceptions.ResourceNotFoundException;
 import com.maliag.grimoireLink.features.dndapi.dto.*;
+import com.maliag.grimoireLink.features.monsters.exceptions.MonsterNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import java.util.ArrayList;
@@ -197,7 +199,7 @@ public class DnDApiService {
                 .onStatus(
                         status -> status.value() == 403,
                         (request, response) -> {
-                            throw new IllegalArgumentException("Monstruo no encontente: " + index);
+                            throw new MonsterNotFoundException("Monster not found: " + index);
                         }
                 )
                 .body(MonsterApiResponse.class);

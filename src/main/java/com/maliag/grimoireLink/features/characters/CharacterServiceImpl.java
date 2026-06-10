@@ -214,8 +214,8 @@ public class CharacterServiceImpl implements CharacterService {
         if (newHp <0){
             newHp=0;
         }
-        if (newHp > character.getMaxHP()){
-            newHp=character.getMaxHP();
+        if (newHp > character.getMaxHp()){
+            newHp=character.getMaxHp();
         }
 
         character.setCurrentHp(newHp);
@@ -377,6 +377,8 @@ public class CharacterServiceImpl implements CharacterService {
         itemsXCharacterRepository.delete(item);
 
         return buildResponse(character);
+
+
     }
 
     @Override

@@ -63,7 +63,7 @@ public class CharacterEntity {
     private  Integer level;
 
     @Column(name = "max_hp")
-    private Integer maxHP;
+    private Integer maxHp;
 
     @Column(name = "current_hp")
     private Integer currentHp;

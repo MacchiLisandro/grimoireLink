@@ -6,19 +6,19 @@ import com.maliag.grimoireLink.features.users.Credentials.CredentialsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class AuthService {
+public class    AuthService {
 
     private final CredentialsRepository credentialsRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
 
+    @Transactional
     public AuthResponse authenticate(AuthRequest input) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(

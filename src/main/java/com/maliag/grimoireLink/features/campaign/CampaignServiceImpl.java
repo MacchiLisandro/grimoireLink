@@ -3,8 +3,10 @@ package com.maliag.grimoireLink.features.campaign;
 import com.maliag.grimoireLink.features.campaign.dto.CampaignRequest;
 import com.maliag.grimoireLink.features.campaign.dto.CampaignResponse;
 import com.maliag.grimoireLink.features.campaign.dto.UpdateCampaignRequest;
-import com.maliag.grimoireLink.features.users.UserEntity;
-import com.maliag.grimoireLink.features.users.UserRepository;
+
+import com.maliag.grimoireLink.features.users.models.UserEntity;
+import com.maliag.grimoireLink.features.users.repositories.UserRepository;
+import com.maliag.grimoireLink.features.users.services.UserService;
 import com.maliag.grimoireLink.features.usersXCampaign.Role;
 import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignEntity;
 import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignMapper;
@@ -31,6 +33,7 @@ public class CampaignServiceImpl implements CampaignService{
     private final UsersXCampaignMapper uxcMapper;
 
     private final UserRepository userRepository;
+    private final UserService userService;
 
     @Transactional(readOnly = true)
     public CampaignEntity findByPublicId(UUID publicId){
@@ -69,6 +72,13 @@ public class CampaignServiceImpl implements CampaignService{
             inviteCode = generateInviteCode();
         }while (repository.existsByInviteCode(inviteCode));
         campaign.setInviteCode(inviteCode);
+        UserEntity user = userService.getLoggedUserEntity();
+        UsersXCampaignEntity membership = UsersXCampaignEntity.builder()
+                .user(user)
+                .campaign(campaign)
+                .role(Role.DUNGEON_MASTER)
+                .build();
+        uxcRepository.save(membership);
         return mapper.toResponse(repository.save(campaign));
     }
 
@@ -104,11 +114,7 @@ public class CampaignServiceImpl implements CampaignService{
     @Transactional
     public CampaignResponse joinCampaign(String inviteCode) {
 
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        UserEntity user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
-
+        UserEntity user = userService.getLoggedUserEntity();
         CampaignEntity campaign = repository.findByInviteCode(inviteCode)
                 .orElseThrow(() -> new EntityNotFoundException("Código de invitación inválido"));
 
