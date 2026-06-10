@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -29,6 +30,11 @@ public class EncounterController {
     @GetMapping("/{id}")
     public ResponseEntity<EncounterResponse> getEncounterById(@PathVariable UUID id) {
         return ResponseEntity.ok(encounterService.getEncounterById(id));
+    }
+
+    @GetMapping("/campaign/{campaignId}")
+    public ResponseEntity<List<EncounterResponse>> getAllEncountersByCampaign(@PathVariable UUID campaignId) {
+        return ResponseEntity.ok(encounterService.getAllEncountersByCampaign(campaignId));
     }
 
     @PutMapping("/{id}/status")

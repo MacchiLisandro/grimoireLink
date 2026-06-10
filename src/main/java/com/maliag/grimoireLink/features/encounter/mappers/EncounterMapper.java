@@ -14,6 +14,7 @@ public interface EncounterMapper {
     EncounterResponse toResponse(EncounterEntity encounter);
     @Mapping(target = "publicId", ignore = true)
     @Mapping(target = "characters", ignore = true)
+    @Mapping(target = "campaign", ignore = true)
     @Mapping(target = "monsters", ignore = true)
     @Mapping(target = "encounterStatus", ignore = true)
     EncounterEntity toEntity(EncounterRequest encounter);

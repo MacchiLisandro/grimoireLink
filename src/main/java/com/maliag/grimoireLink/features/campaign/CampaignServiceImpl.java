@@ -4,6 +4,7 @@ import com.maliag.grimoireLink.features.campaign.dto.CampaignRequest;
 import com.maliag.grimoireLink.features.campaign.dto.CampaignResponse;
 import com.maliag.grimoireLink.features.campaign.dto.UpdateCampaignRequest;
 
+import com.maliag.grimoireLink.features.encounter.dto.EncounterResponse;
 import com.maliag.grimoireLink.features.users.models.UserEntity;
 import com.maliag.grimoireLink.features.users.repositories.UserRepository;
 import com.maliag.grimoireLink.features.users.services.UserService;

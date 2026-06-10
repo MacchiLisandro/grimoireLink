@@ -3,10 +3,12 @@ package com.maliag.grimoireLink.features.campaign;
 import com.maliag.grimoireLink.features.campaign.dto.CampaignRequest;
 import com.maliag.grimoireLink.features.campaign.dto.CampaignResponse;
 import com.maliag.grimoireLink.features.campaign.dto.UpdateCampaignRequest;
+import com.maliag.grimoireLink.features.encounter.dto.EncounterResponse;
 import com.maliag.grimoireLink.features.usersXCampaign.dto.CampaignMemberResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
