@@ -44,6 +44,8 @@ public class MonsterServiceImpl implements MonsterService {
         if (newHp <= 0) {
             monster.setCurrentHp(0);
             monster.setIsAlive(false);
+        } if(newHp >= monster.getMaxHp()) {
+            monster.setCurrentHp(monster.getMaxHp());
         } else {
             monster.setCurrentHp(newHp);
         }
