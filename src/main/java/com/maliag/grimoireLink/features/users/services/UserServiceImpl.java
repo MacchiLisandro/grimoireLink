@@ -30,8 +30,7 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new UserAlreadyExistsException("Email already exists");
         }
-        UserEntity user = userMapper.registerToEntity(request);
-        userRepository.save(user);
+        UserEntity user = userRepository.save(userMapper.registerToEntity(request));
         CredentialsEntity credentials = CredentialsEntity.builder()
                 .username(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
@@ -59,6 +58,8 @@ public class UserServiceImpl implements UserService {
             throw new UserNotRegisteredOrPasswordIncorrectException("Password incorrect");
         }
         credentials.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        System.out.println("password cambiandose updaitiandose");
+        credentialsRepository.save(credentials);
     }
 
     @Transactional(readOnly = true)

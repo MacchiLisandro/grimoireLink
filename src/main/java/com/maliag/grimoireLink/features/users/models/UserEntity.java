@@ -31,7 +31,7 @@ public class UserEntity {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private CredentialsEntity credentials;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)

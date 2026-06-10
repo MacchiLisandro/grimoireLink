@@ -18,24 +18,25 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> getUser(@RequestParam UUID id){
+    public ResponseEntity<UserResponse> getUser(@PathVariable UUID id){
         return ResponseEntity.ok(userService.getUser(id));
     }
 
-    @GetMapping
+    @GetMapping("/me")
     public ResponseEntity<UserResponse> getLoggedUser(){
         return ResponseEntity.ok(userService.getLoggedUser());
     }
 
-    @PutMapping("/{id}/name")
+    @PatchMapping("/{id}/name")
     public ResponseEntity<UserResponse> updateName(@PathVariable UUID id,
                                                    @Valid @RequestBody UserUpdateNameRequest request){
         return ResponseEntity.ok(userService.updateName(id, request));
     }
 
-    @PutMapping("/{id}/password")
+    @PatchMapping("/{id}/password")
     public ResponseEntity<UserResponse> updatePassword(@PathVariable UUID id,
                                                    @Valid @RequestBody UserUpdatePasswordRequest request){
+        userService.updatePassword(id, request);
         return ResponseEntity.noContent().build();
     }
 }
