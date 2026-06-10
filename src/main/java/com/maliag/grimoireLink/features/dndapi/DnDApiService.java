@@ -197,7 +197,7 @@ public class DnDApiService {
                 .uri("/api/2014/monsters/{index}", index)
                 .retrieve()
                 .onStatus(
-                        status -> status.value() == 403,
+                        status -> status.value() == 403 || status.value() == 404,
                         (request, response) -> {
                             throw new MonsterNotFoundException("Monster not found: " + index);
                         }
