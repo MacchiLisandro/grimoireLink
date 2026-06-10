@@ -75,4 +75,12 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
         return userMapper.toResponse(user);
     }
+
+    @Transactional(readOnly = true)
+    public UserEntity getLoggedUserEntity() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        return user;
+    }
 }

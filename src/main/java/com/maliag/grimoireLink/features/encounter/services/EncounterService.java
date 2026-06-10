@@ -14,4 +14,6 @@ public interface EncounterService {
     EncounterResponse addMonster(UUID encounterId, String monsterId);
     EncounterResponse updateCharacterHp(UUID encounterId, UUID characterId, int newHp);
     EncounterResponse updateMonsterHp(UUID encounterId, UUID monsterId, int newHp);
+    EncounterResponse removeCharacter(UUID encounterId, UUID characterId);
+    EncounterResponse removeMonster(UUID encounterId, UUID monsterId);
 }

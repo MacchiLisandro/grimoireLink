@@ -27,7 +27,9 @@ public class EncounterServiceImpl implements EncounterService {
 
     @Transactional
     public EncounterResponse saveEncounter(EncounterRequest Request) {
-        return encounterMapper.toResponse(encounterRepository.save(encounterMapper.toEntity(Request)));
+        EncounterEntity encounter = encounterMapper.toEntity(Request);
+        encounter.setEncounterStatus(EncounterStatus.PLANNED);
+        return encounterMapper.toResponse( encounterRepository.save(encounter));
     }
 
 
@@ -90,4 +92,19 @@ public class EncounterServiceImpl implements EncounterService {
         return encounterMapper.toResponse(encounter);
     }
 
+    @Transactional
+    public EncounterResponse removeCharacter(UUID encounterId, UUID characterId) {
+        EncounterEntity encounter = encounterRepository.findByPublicId(encounterId)
+                .orElseThrow(() -> new EncounterNotFoundException("Encounter not found"));
+        encounter.getCharacters().removeIf(c -> c.getPublicId().equals(characterId));
+        return encounterMapper.toResponse(encounter);
+    }
+
+    @Transactional
+    public EncounterResponse removeMonster(UUID encounterId, UUID monsterId) {
+        EncounterEntity encounter = encounterRepository.findByPublicId(encounterId)
+                .orElseThrow(() -> new EncounterNotFoundException("Encounter not found"));
+        encounter.getMonsters().removeIf(m -> m.getPublicId().equals(monsterId));
+        return encounterMapper.toResponse(encounter);
+    }
 }

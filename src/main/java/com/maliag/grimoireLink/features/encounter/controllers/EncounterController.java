@@ -62,4 +62,16 @@ public class EncounterController {
                                                              @RequestParam int newHp) {
         return ResponseEntity.ok(encounterService.updateMonsterHp(id, monsterId, newHp));
     }
+
+    @DeleteMapping("/{id}/characters/{characterId}")
+    public ResponseEntity<EncounterResponse> removeCharacter(@PathVariable UUID id,
+                                                             @PathVariable UUID characterId) {
+        return ResponseEntity.ok(encounterService.removeCharacter(id, characterId));
+    }
+
+    @DeleteMapping("/{id}/monsters/{monsterId}")
+    public ResponseEntity<EncounterResponse> removeMonster(@PathVariable UUID id,
+                                                           @PathVariable UUID monsterId) {
+        return ResponseEntity.ok(encounterService.removeMonster(id, monsterId));
+    }
 }

@@ -1,15 +1,14 @@
 package com.maliag.grimoireLink.features.usersXCampaign;
 
 import com.maliag.grimoireLink.features.campaign.CampaignEntity;
-import com.maliag.grimoireLink.features.characters.CharacterEntity;
-import com.maliag.grimoireLink.features.users.UserEntity;
+import com.maliag.grimoireLink.features.users.models.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 
-import javax.swing.text.html.Option;
+
 import java.util.Optional;
 import java.util.List;
 import java.util.UUID;

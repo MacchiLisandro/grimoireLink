@@ -8,8 +8,7 @@ import com.maliag.grimoireLink.features.monsters.models.MonsterEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Builder
@@ -51,7 +50,7 @@ public class EncounterEntity {
             joinColumns = @JoinColumn(name = "encounter_id"),
             inverseJoinColumns = @JoinColumn(name = "character_id")
     )
-    private List<CharacterEntity> characters;
+    private Set<CharacterEntity> characters =  new HashSet<>();
 
     @ManyToMany
     @JoinTable(
@@ -59,7 +58,7 @@ public class EncounterEntity {
             joinColumns = @JoinColumn(name = "encounter_id"),
             inverseJoinColumns = @JoinColumn(name = "monster_id")
     )
-    private List<MonsterEntity> monsters;
+    private Set<MonsterEntity> monsters =   new HashSet<>();
 
     @PrePersist
     void onCreate(){
