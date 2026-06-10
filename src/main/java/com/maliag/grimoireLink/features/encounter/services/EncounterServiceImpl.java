@@ -1,6 +1,7 @@
 package com.maliag.grimoireLink.features.encounter.services;
 
 import com.maliag.grimoireLink.features.characters.CharacterService;
+import com.maliag.grimoireLink.features.encounter.exceptions.MonsterNotInEncounterException;
 import com.maliag.grimoireLink.features.encounter.models.EncounterEntity;
 import com.maliag.grimoireLink.features.encounter.mappers.EncounterMapper;
 import com.maliag.grimoireLink.features.encounter.repositories.EncounterRepository;
@@ -87,7 +88,7 @@ public class EncounterServiceImpl implements EncounterService {
         encounter.getMonsters().stream()
                 .filter(x -> x.getPublicId().equals(monsterId))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Monster not in encounter"));
+                .orElseThrow(() -> new MonsterNotInEncounterException("Monster not in encounter"));
         monsterService.updateHp(monsterId, newHp);
         return encounterMapper.toResponse(encounter);
     }
