@@ -373,8 +373,6 @@ public class CharacterServiceImpl implements CharacterService {
         itemsXCharacterRepository.delete(item);
 
         return buildResponse(character);
-
-
     }
 
     @Override
