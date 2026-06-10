@@ -3,6 +3,8 @@ package com.maliag.grimoireLink.features.characters;
 
 import com.maliag.grimoireLink.features.background.BackgroundEntity;
 import com.maliag.grimoireLink.features.background.BackgroundRepository;
+import com.maliag.grimoireLink.features.backgroundSkills.BackGroundSkillsEntity;
+import com.maliag.grimoireLink.features.backgroundSkills.BackgroundSkillsRepository;
 import com.maliag.grimoireLink.features.characters.dto.CharacterCreateRequest;
 import com.maliag.grimoireLink.features.characters.dto.CharacterResponse;
 import com.maliag.grimoireLink.features.characters.dto.CharacterUpdateRequest;
@@ -15,6 +17,8 @@ import com.maliag.grimoireLink.features.itemsXCharacter.ItemType;
 import com.maliag.grimoireLink.features.itemsXCharacter.ItemsXCharacterEntity;
 import com.maliag.grimoireLink.features.itemsXCharacter.ItemsXCharacterRepository;
 import com.maliag.grimoireLink.features.itemsXCharacter.dto.AddItemRequest;
+import com.maliag.grimoireLink.features.skillsXCharacter.SkillsXCharacterEntity;
+import com.maliag.grimoireLink.features.skillsXCharacter.SkillsXCharacterRepository;
 import com.maliag.grimoireLink.features.spellsXCharacter.SpellsXCharacterEntity;
 import com.maliag.grimoireLink.features.spellsXCharacter.SpellsXCharacterRepository;
 import com.maliag.grimoireLink.features.spellsXCharacter.dto.AddSpellRequest;
@@ -35,12 +39,17 @@ import java.util.UUID;
 @AllArgsConstructor
 public class CharacterServiceImpl implements CharacterService {
 
+    /// ///////////////////////////////////////////////////////////////////////
     private final CharacterRepository characterRepository;
     private final UsersXCampaignRepository usersXCampaignRepository;
+    /// ///////////////////////////////////////////////////////////////////////
     private final BackgroundRepository backgroundRepository;
     private final FeatureXCharacterRepository featureXCharacterRepository;
     private final SpellsXCharacterRepository spellsXCharacterRepository;
     private final ItemsXCharacterRepository itemsXCharacterRepository;
+    private final SkillsXCharacterRepository skillsXCharacterRepository;
+    private final BackgroundSkillsRepository backgroundSkillsRepository;
+    /// //////////////////////////////////////////////////////////////////////
     private final CharacterMapper characterMapper;
     private final DnDApiService dnDApiService;
 
@@ -99,6 +108,9 @@ public class CharacterServiceImpl implements CharacterService {
                 dnDApiService.getRaceFeatures(request.getRaceIndex()), "RACE"));
 
         featureXCharacterRepository.saveAll(features);
+
+        List<SkillsXCharacterEntity> skills = buildBackgroundSkills(character, background);
+        skillsXCharacterRepository.saveAll(skills);
 
         return characterMapper.toResponse(character,List.of(),features,List.of());
 
@@ -391,7 +403,7 @@ public class CharacterServiceImpl implements CharacterService {
 
     }
 
-
+/// //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Helper para no repetir codigo al dope///////////////////
     private CharacterResponse buildResponse(CharacterEntity character) {
         List<SpellsXCharacterEntity> spells =
@@ -418,6 +430,25 @@ public class CharacterServiceImpl implements CharacterService {
         }
         return features;
     }
+    /// ///////////////////////////////////////////////////////////////////////////////////////
+    private List<SkillsXCharacterEntity> buildBackgroundSkills(
+            CharacterEntity character, BackgroundEntity background) {
+        List<SkillsXCharacterEntity> skills = new ArrayList<>();
+
+        List<BackGroundSkillsEntity> backgroundSkills =
+                backgroundSkillsRepository.findByBackground(background);
+
+        for (BackGroundSkillsEntity bgSkill : backgroundSkills) {
+            skills.add(SkillsXCharacterEntity.builder()
+                    .character(character)
+                    .skillIndex(bgSkill.getSkillIndex())
+                    .name(bgSkill.getSkillname())
+                    .proficiency(1)
+                    .build());
+        }
+        return skills;
+    }
+
     /// //////////////////////////////////////////////////////////
     private void validateAccess(CharacterEntity character, String username) {
         UUID publicCampaign = character.getUsersXCampaignEntity().getCampaign().getPublicId();
