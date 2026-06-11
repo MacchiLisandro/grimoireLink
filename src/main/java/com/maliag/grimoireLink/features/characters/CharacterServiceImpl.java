@@ -27,7 +27,6 @@ import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.hibernate.cache.spi.support.AbstractReadWriteAccess.Item;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -211,9 +210,11 @@ public class CharacterServiceImpl implements CharacterService {
 
         validateAccess(character,username);
 
-        if (newHp <0){
+        if (newHp <=0){
             newHp=0;
+            character.setStatus(CharacterStatus.UNCONSCIOUS);
         }
+
         if (newHp > character.getMaxHp()){
             newHp=character.getMaxHp();
         }

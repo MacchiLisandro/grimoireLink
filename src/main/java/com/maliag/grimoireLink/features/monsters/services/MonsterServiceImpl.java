@@ -21,7 +21,9 @@ public class MonsterServiceImpl implements MonsterService {
 
     @Transactional
     public MonsterEntity createMonsterFromApi (String index){
-        return monsterRepository.save(monsterMapper.toEntity(dndApiService.getMonsterByIndex(index)));
+        MonsterEntity monster = monsterMapper.toEntity(dndApiService.getMonsterByIndex(index));
+        monster.setCurrentHp(monster.getMaxHp());
+        return monsterRepository.save(monster);
     }
 
     @Transactional
@@ -42,6 +44,8 @@ public class MonsterServiceImpl implements MonsterService {
         if (newHp <= 0) {
             monster.setCurrentHp(0);
             monster.setIsAlive(false);
+        } if(newHp >= monster.getMaxHp()) {
+            monster.setCurrentHp(monster.getMaxHp());
         } else {
             monster.setCurrentHp(newHp);
         }

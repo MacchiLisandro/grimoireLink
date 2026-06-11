@@ -1,5 +1,6 @@
 package com.maliag.grimoireLink.features.encounter.models;
 
+import com.maliag.grimoireLink.features.campaign.CampaignEntity;
 import com.maliag.grimoireLink.features.characters.CharacterEntity;
 import com.maliag.grimoireLink.features.encounter.enums.EncounterDifficulty;
 import com.maliag.grimoireLink.features.encounter.enums.EncounterStatus;
@@ -52,6 +53,10 @@ public class EncounterEntity {
     )
     private Set<CharacterEntity> characters =  new HashSet<>();
 
+    @ManyToOne
+    @JoinColumn(name = "campaign_id", nullable = false)
+    private CampaignEntity campaign;
+
     @ManyToMany
     @JoinTable(
             name = "encounters_x_monster",
@@ -59,6 +64,7 @@ public class EncounterEntity {
             inverseJoinColumns = @JoinColumn(name = "monster_id")
     )
     private Set<MonsterEntity> monsters =   new HashSet<>();
+
 
     @PrePersist
     void onCreate(){

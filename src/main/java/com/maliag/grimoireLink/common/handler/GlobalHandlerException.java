@@ -10,6 +10,7 @@ package com.maliag.grimoireLink.common.handler;
     import org.springframework.web.bind.MethodArgumentNotValidException;
     import org.springframework.web.bind.annotation.ControllerAdvice;
     import org.springframework.web.bind.annotation.ExceptionHandler;
+    import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
     import java.time.LocalDateTime;
     import java.util.stream.Collectors;
@@ -51,6 +52,14 @@ package com.maliag.grimoireLink.common.handler;
         public ResponseEntity<ApiErrorResponse> handleUnauthorized(UnauthorizedException ex, HttpServletRequest request) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ApiErrorResponse(401, ex.getMessage(), request.getRequestURI(), LocalDateTime.now()));
+        }
+
+        ///exception de spring
+        @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+        public ResponseEntity<ApiErrorResponse> handleTypeMismatch(MethodArgumentTypeMismatchException ex, HttpServletRequest request) {
+            String message = "Invalid value '" + ex.getValue() + "' for parameter '" + ex.getName() + "'";
+            return ResponseEntity.badRequest()
+                    .body(new ApiErrorResponse(400, message, request.getRequestURI(), LocalDateTime.now()));
         }
 
     }

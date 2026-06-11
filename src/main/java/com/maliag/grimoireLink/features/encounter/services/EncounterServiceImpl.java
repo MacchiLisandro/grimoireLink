@@ -1,6 +1,9 @@
 package com.maliag.grimoireLink.features.encounter.services;
 
+import com.maliag.grimoireLink.features.campaign.CampaignEntity;
+import com.maliag.grimoireLink.features.campaign.CampaignService;
 import com.maliag.grimoireLink.features.characters.CharacterService;
+import com.maliag.grimoireLink.features.encounter.exceptions.MonsterNotInEncounterException;
 import com.maliag.grimoireLink.features.encounter.models.EncounterEntity;
 import com.maliag.grimoireLink.features.encounter.mappers.EncounterMapper;
 import com.maliag.grimoireLink.features.encounter.repositories.EncounterRepository;
@@ -14,7 +17,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -24,12 +29,15 @@ public class EncounterServiceImpl implements EncounterService {
     private final EncounterMapper encounterMapper;
     private final CharacterService characterService;
     private final MonsterService monsterService;
+    private final CampaignService campaignService;
 
     @Transactional
-    public EncounterResponse saveEncounter(EncounterRequest Request) {
-        EncounterEntity encounter = encounterMapper.toEntity(Request);
+    public EncounterResponse saveEncounter(EncounterRequest request) {
+        CampaignEntity campaign = campaignService.findByPublicId(request.getCampaignId());
+        EncounterEntity encounter = encounterMapper.toEntity(request);
         encounter.setEncounterStatus(EncounterStatus.PLANNED);
-        return encounterMapper.toResponse( encounterRepository.save(encounter));
+        encounter.setCampaign(campaign);
+        return encounterMapper.toResponse(encounterRepository.save(encounter));
     }
 
 
@@ -37,6 +45,13 @@ public class EncounterServiceImpl implements EncounterService {
     public EncounterResponse getEncounterById (UUID encounterId){
         return encounterMapper.toResponse(encounterRepository.findByPublicId(encounterId)
                         .orElseThrow(() -> new EncounterNotFoundException("Encounter not found")));
+    }
+
+    @Transactional(readOnly = true)
+    public List<EncounterResponse> getAllEncountersByCampaign(UUID publicId) {
+        return encounterRepository.findByCampaignPublicId(publicId).stream()
+                .map(encounterMapper::toResponse)
+                .toList();
     }
 
     @Transactional
@@ -87,7 +102,7 @@ public class EncounterServiceImpl implements EncounterService {
         encounter.getMonsters().stream()
                 .filter(x -> x.getPublicId().equals(monsterId))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Monster not in encounter"));
+                .orElseThrow(() -> new MonsterNotInEncounterException("Monster not in encounter"));
         monsterService.updateHp(monsterId, newHp);
         return encounterMapper.toResponse(encounter);
     }
