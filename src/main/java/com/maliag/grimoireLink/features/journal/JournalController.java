@@ -29,15 +29,9 @@ public class JournalController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<JournalResponse> getJournalsByCampaign(@RequestParam UUID campaignPublicId){
-        return service.getJournalsByCampaign(campaignPublicId);
-    }
-
-    @GetMapping("/filter")
-    @ResponseStatus(HttpStatus.OK)
     public List<JournalResponse> filterJournals(@RequestParam UUID campaignPublicId,
-                                                @RequestParam JournalEntryType journalEntryType,
-                                                @RequestParam LocalDateTime date){
+                                                @RequestParam(required = false) JournalEntryType journalEntryType,
+                                                @RequestParam(required = false) LocalDateTime date){
         return service.filterJournals(campaignPublicId, journalEntryType, date);
     }
 

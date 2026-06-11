@@ -10,7 +10,6 @@ import java.util.UUID;
 
 public interface JournalService {
     JournalResponse getByPublicId(UUID publicId);
-    List<JournalResponse> getJournalsByCampaign(UUID campaignPublicId);
     List<JournalResponse> filterJournals(UUID campaignPublicId,
                                          JournalEntryType journalEntryType,
                                          LocalDateTime date);

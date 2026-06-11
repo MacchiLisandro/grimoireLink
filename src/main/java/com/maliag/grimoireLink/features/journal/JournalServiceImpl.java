@@ -5,6 +5,7 @@ import com.maliag.grimoireLink.features.journal.dto.JournalResponse;
 import com.maliag.grimoireLink.features.journal.dto.UpdateJournalRequest;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +13,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static com.maliag.grimoireLink.features.journal.JournalSpecifications.*;
 
 @Service
 @RequiredArgsConstructor
@@ -33,20 +36,16 @@ public class JournalServiceImpl implements JournalService{
 
     @Override
     @Transactional(readOnly = true)
-    public List<JournalResponse> getJournalsByCampaign(UUID campaignPublicId) {
-        return repository.findByCampaign_PublicId(campaignPublicId).stream()
-                .map(mapper::toResponse)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public List<JournalResponse> filterJournals(UUID campaignPublicId,
                                                 JournalEntryType journalEntryType,
                                                 LocalDateTime date) {
-        return repository.findByCampaign_PublicId(campaignPublicId).stream()
-                .filter(j -> journalEntryType==null || j.getJournalEntryType()==journalEntryType)
-                .filter(j -> date==null || j.getDate().equals(date))
+
+        Specification<JournalEntity> spec = Specification
+                .where(byCampaignPublicId(campaignPublicId))
+                .and(byJournalEntryType(journalEntryType))
+                .and(byDate(date));
+
+        return repository.findAll(spec).stream()
                 .map(mapper::toResponse)
                 .collect(Collectors.toList());
     }
