@@ -21,7 +21,7 @@ package com.maliag.grimoireLink.common.handler;
     public class GlobalHandlerException {
         @ExceptionHandler(HttpMessageNotReadableException.class)
         public ResponseEntity<ApiErrorResponse> handleUnreadable(HttpMessageNotReadableException ex, HttpServletRequest request) {
-            String message = "Json mal formado";
+            String message = "Invalid json body";
             return ResponseEntity.badRequest()
                     .body(new ApiErrorResponse(400, message, request.getRequestURI(), LocalDateTime.now()));
         }
