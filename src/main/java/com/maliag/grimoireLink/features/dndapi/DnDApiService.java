@@ -1,5 +1,7 @@
 package com.maliag.grimoireLink.features.dndapi;
+import com.maliag.grimoireLink.common.exceptions.ResourceNotFoundException;
 import com.maliag.grimoireLink.features.dndapi.dto.*;
+import com.maliag.grimoireLink.features.monsters.exceptions.MonsterNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import java.util.ArrayList;
@@ -100,7 +102,7 @@ public class DnDApiService {
 
     public DndReference getRaceByIndex(String index){
         return restClient.get()
-                .uri("/api/2014/races/{index}")
+                .uri("/api/2014/races/{index}",index)
                 .retrieve()
                 .body(DndReference.class);
     }
@@ -115,6 +117,27 @@ public class DnDApiService {
         }
 
         return details.getTraits();
+    }
+
+    public DndReference getSpellByIndex(String index){
+        return restClient.get()
+                .uri("/api/2014/spells/{index}",index)
+                .retrieve()
+                .body(DndReference.class);
+    }
+
+    public DndReference getEquipmentByIndex(String index){
+        return restClient.get()
+                .uri("/api/2014/equipment/{index}",index)
+                .retrieve()
+                .body(DndReference.class);
+    }
+
+    public DndReference getMagicItemByIndex(String index){
+        return restClient.get()
+                .uri("/api/2014/magic-items/{index}",index)
+                .retrieve()
+                .body(DndReference.class);
     }
 
 
@@ -174,9 +197,9 @@ public class DnDApiService {
                 .uri("/api/2014/monsters/{index}", index)
                 .retrieve()
                 .onStatus(
-                        status -> status.value() == 403,
+                        status -> status.value() == 403 || status.value() == 404,
                         (request, response) -> {
-                            throw new IllegalArgumentException("Monstruo no encontente: " + index);
+                            throw new MonsterNotFoundException("Monster not found: " + index);
                         }
                 )
                 .body(MonsterApiResponse.class);

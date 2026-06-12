@@ -12,11 +12,11 @@ import java.util.UUID;
 public class MonsterResponse {
     private UUID publicId;
     private String name;
-    private Integer level;
     private Integer maxHp;
     private Integer currentHp;
     private Integer strength;
     private Integer dexterity;
     private Integer constitution;
     private Boolean isAlive;
+    private Double challengeRating;
 }

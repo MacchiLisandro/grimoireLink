@@ -1,7 +1,5 @@
 package com.maliag.grimoireLink.features.usersXCampaign;
 
-import com.maliag.grimoireLink.features.campaign.CampaignMapper;
-import com.maliag.grimoireLink.features.users.UserEntity;
 import com.maliag.grimoireLink.features.usersXCampaign.dto.CampaignMemberResponse;
 import org.springframework.stereotype.Component;
 

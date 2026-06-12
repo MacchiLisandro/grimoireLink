@@ -1,6 +1,7 @@
 package com.maliag.grimoireLink.features.users.Auth;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,9 +25,14 @@ public class JwtService {
     private String jwtSecretKey;
     @Value("${jwt.expiration}")
     private Long jwtExpiration;
+    @Value("${jwt.refresh.expiration}")
+    private Long refreshTokenExpiration;
+
+
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
+
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
         List<String> roles = userDetails.getAuthorities().stream()
@@ -35,6 +41,7 @@ public class JwtService {
         claims.put("roles", roles);
         return buildToken(claims, userDetails, jwtExpiration);
     }
+
     public List<GrantedAuthority> extractAuthorities(String token) {
         Claims claims = extractAllClaims(token);
         List<?> rawRoles = claims.get("roles", List.class);
@@ -46,11 +53,13 @@ public class JwtService {
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }
+
     private <T> T extractClaim(String token, Function<Claims, T>
             claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
+
     private Claims extractAllClaims(String token) {return Jwts
             .parser()
             .verifyWith(getSignInKey())
@@ -58,6 +67,7 @@ public class JwtService {
             .parseSignedClaims(token)
             .getPayload();
     }
+
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()))
@@ -65,6 +75,7 @@ public class JwtService {
                 && userDetails.isAccountNonLocked()
                 && userDetails.isEnabled();
     }
+
     private String buildToken(
             Map<String, Object> extraClaims,
             UserDetails userDetails,
@@ -87,5 +98,20 @@ public class JwtService {
     private boolean isTokenExpired(String token) {
         Date expiration = extractClaim(token, Claims::getExpiration);
         return expiration.before(new Date());
+    }
+
+    public String generateRefreshToken(UserDetails userDetails) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("type", "refresh");
+        return buildToken(claims, userDetails, refreshTokenExpiration);
+    }
+
+    public boolean validateRefreshToken(String refreshToken, UserDetails userDetails) {
+        try {
+            final String username = extractUsername(refreshToken);
+            return (username.equals(userDetails.getUsername())) && !isTokenExpired(refreshToken);
+        } catch (JwtException e) {
+            return false;
+        }
     }
 }

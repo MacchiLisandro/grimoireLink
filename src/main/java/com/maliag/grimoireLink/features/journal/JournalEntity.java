@@ -1,6 +1,6 @@
 package com.maliag.grimoireLink.features.journal;
 
-import com.maliag.grimoireLink.features.campaign.CampaignEntity;
+import com.maliag.grimoireLink.features.campaign.model.CampaignEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

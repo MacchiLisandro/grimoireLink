@@ -1,6 +1,6 @@
 package com.maliag.grimoireLink.features.users.Credentials;
 
-import com.maliag.grimoireLink.features.users.UserEntity;
+import com.maliag.grimoireLink.features.users.models.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -33,6 +33,9 @@ public class CredentialsEntity implements UserDetails {
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id", unique = true)
     private UserEntity user;
+
+    @Column(name = "refresh_token", length = 2048, unique = true)
+    private String refreshToken;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

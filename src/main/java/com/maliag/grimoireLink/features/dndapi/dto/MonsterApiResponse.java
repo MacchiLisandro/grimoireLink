@@ -18,5 +18,9 @@ public class MonsterApiResponse {
     private Integer strength;
     private Integer dexterity;
     private Integer constitution;
+    private Integer intelligence;
+    private Integer wisdom;
+    private Integer charisma;
+    @JsonProperty("challenge_rating")
     private Double challengeRating;
 }

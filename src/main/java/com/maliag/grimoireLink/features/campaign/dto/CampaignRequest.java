@@ -16,6 +16,7 @@ public class CampaignRequest {
     @NotBlank
     private String name;
 
+    @NotBlank
     @Size(max = 65535)
     private String description;
 }

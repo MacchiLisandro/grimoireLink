@@ -1,0 +1,53 @@
+package com.maliag.grimoireLink.features.campaign.model;
+
+import com.maliag.grimoireLink.features.campaign.enums.CampaignStatus;
+import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignEntity;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+@Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@Table(name="campaigns")
+public class CampaignEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "public_id", nullable = false, unique = true, updatable = false)
+    private UUID publicId;
+
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @Column(name = "description", columnDefinition = "TEXT")
+    private String description;
+
+    @Column(name = "invite_code", nullable = false, unique = true)
+    private String inviteCode;
+
+    @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private CampaignStatus status;
+
+    @OneToMany(mappedBy = "campaign", fetch = FetchType.LAZY)
+    private List<UsersXCampaignEntity> users = new ArrayList<>();
+
+    @PrePersist
+    void onCreate(){
+        if(publicId==null){
+            this.publicId = UUID.randomUUID();
+        }
+        if(status==null){
+            status = CampaignStatus.ACTIVE;
+        }
+    }
+}
