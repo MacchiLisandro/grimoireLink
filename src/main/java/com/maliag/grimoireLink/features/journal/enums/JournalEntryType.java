@@ -1,4 +1,4 @@
-package com.maliag.grimoireLink.features.journal;
+package com.maliag.grimoireLink.features.journal.enums;
 
 public enum JournalEntryType {
     // Combate

@@ -1,5 +1,7 @@
-package com.maliag.grimoireLink.features.journal;
+package com.maliag.grimoireLink.features.journal.controller;
 
+import com.maliag.grimoireLink.features.journal.enums.JournalEntryType;
+import com.maliag.grimoireLink.features.journal.service.JournalService;
 import com.maliag.grimoireLink.features.journal.dto.JournalRequest;
 import com.maliag.grimoireLink.features.journal.dto.JournalResponse;
 import com.maliag.grimoireLink.features.journal.dto.UpdateJournalRequest;

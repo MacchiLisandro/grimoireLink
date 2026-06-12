@@ -1,6 +1,6 @@
 package com.maliag.grimoireLink.features.journal.dto;
 
-import com.maliag.grimoireLink.features.journal.JournalEntryType;
+import com.maliag.grimoireLink.features.journal.enums.JournalEntryType;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
