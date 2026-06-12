@@ -140,23 +140,26 @@ public class DnDApiService {
                 .body(DndReference.class);
     }
 
+    public SpellcastingSlots getSpellSlots(String classIndex,int level){
+        ClassLevelDetail detail=restClient.get()
+                .uri("/api/2014/classes/{classIndex}/levels/{level}",classIndex,level)
+                .retrieve()
+                .body(ClassLevelDetail.class);
+
+        if (detail == null) return null;
+
+        return detail.getSpellcasting();
+    }
 
 /// Helper para devolver los slots por nivel
     public Integer getMaxSpellsLevel(String Classindex, int characterLevel)
     {
-        ClassLevelDetail detail=restClient.get()
-                .uri("/api/2014/classes/{ClassIndex}/levels",Classindex,characterLevel)
-                .retrieve()
-                .body(ClassLevelDetail.class);
+        SpellcastingSlots slots=getSpellSlots(Classindex,characterLevel);
+        if (slots == null) return 0;
 
-        if(detail == null || detail.getSpellcasting() == null)
-        {
-            return 0;
-        }
 
-        SpellcastingSlots slots = detail.getSpellcasting();
         int[] spellSlots = {
-                0, // índice 0 no se usa
+                0,/// nunca sos lvl 0  xd
                 slots.getSpellSlotsLevel1(),
                 slots.getSpellSlotsLevel2(),
                 slots.getSpellSlotsLevel3(),

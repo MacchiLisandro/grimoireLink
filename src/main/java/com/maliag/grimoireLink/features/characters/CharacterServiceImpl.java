@@ -11,6 +11,7 @@ import com.maliag.grimoireLink.features.characters.dto.CharacterUpdateRequest;
 import com.maliag.grimoireLink.features.dndapi.DnDApiService;
 import com.maliag.grimoireLink.features.dndapi.dto.ClassDetail;
 import com.maliag.grimoireLink.features.dndapi.dto.DndReference;
+import com.maliag.grimoireLink.features.dndapi.dto.SpellcastingSlots;
 import com.maliag.grimoireLink.features.featuresXCharacter.FeatureXCharacterEntity;
 import com.maliag.grimoireLink.features.featuresXCharacter.FeatureXCharacterRepository;
 import com.maliag.grimoireLink.features.itemsXCharacter.ItemType;
@@ -111,7 +112,11 @@ public class CharacterServiceImpl implements CharacterService {
         List<SkillsXCharacterEntity> skills = buildBackgroundSkills(character, background);
         skillsXCharacterRepository.saveAll(skills);
 
-        return characterMapper.toResponse(character,List.of(),features,List.of());
+        SpellcastingSlots spellSlots =
+                dnDApiService.getSpellSlots(request.getClassIndex(), request.getLevel());
+
+
+        return characterMapper.toResponse(character,List.of(),features,List.of(),skills,spellSlots);
 
 
     }
@@ -256,6 +261,14 @@ public class CharacterServiceImpl implements CharacterService {
                 .orElseThrow(()->new EntityNotFoundException("Character not found"));
 
         validateAccess(character,username);
+
+        SpellcastingSlots slots = dnDApiService.getSpellSlots(
+                character.getClassIndex(), character.getLevel());
+
+        if (slots == null) {
+            throw new IllegalArgumentException(
+                    "La clase " + character.getClassName() + " no puede lanzar hechizos");
+        }
 
         boolean equipped=spellsXCharacterRepository.existsByCharacterAndSpellIndex(character, request.getSpellIndex());
 
@@ -417,8 +430,13 @@ public class CharacterServiceImpl implements CharacterService {
                 featureXCharacterRepository.findByCharacter(character);
         List<ItemsXCharacterEntity> items =
                 itemsXCharacterRepository.findByCharacter(character);
+        List<SkillsXCharacterEntity> skills =
+                skillsXCharacterRepository.findByCharacter(character);
+        SpellcastingSlots spellSlots =
+                dnDApiService.getSpellSlots(character.getClassIndex(), character.getLevel());
 
-        return characterMapper.toResponse(character, spells, features, items);
+
+        return characterMapper.toResponse(character, spells, features, items,skills,spellSlots);
     }
 
     /// /////////////////////////////////////////////////////////

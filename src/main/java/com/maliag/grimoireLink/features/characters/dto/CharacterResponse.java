@@ -1,6 +1,11 @@
 package com.maliag.grimoireLink.features.characters.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.maliag.grimoireLink.features.characters.CharacterStatus;
+import com.maliag.grimoireLink.features.dndapi.dto.SpellcastingSlots;
+import com.maliag.grimoireLink.features.skillsXCharacter.dto.CharacterSkillResponse;
 import com.maliag.grimoireLink.features.spellsXCharacter.dto.SpellResponse;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -51,8 +56,11 @@ public class CharacterResponse {
     private List<SpellResponse>knowSpells;
     private List<String>featureIndices;
     private List<CharacterItemResponse>items;
+    private List<CharacterSkillResponse> skills;
 
-    // un resumen del personaje(a la hora de hacer el mapper vamos a implementar un helper de descripcion de personaje)
+    @JsonInclude(Include.NON_NULL)/// Por si es un no caster
+    private SpellcastingSlots spellSlots;
+
     private String summary;
 
 

@@ -81,9 +81,9 @@ public class CharacterController {
     @DeleteMapping("/{characterId}/spell/{spellId}")
     @ResponseStatus(HttpStatus.OK)
     public CharacterResponse removeSpell(@PathVariable UUID characterId,
-                                         @PathVariable UUID spellid){
+                                         @PathVariable UUID spellId){
 
-        return characterService.removeSpell(characterId,spellid);
+        return characterService.removeSpell(characterId,spellId);
     }
 
     @PatchMapping("/{characterId}/spells/{spellId}/prepare")
