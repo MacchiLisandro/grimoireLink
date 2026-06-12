@@ -27,4 +27,6 @@ public interface UsersXCampaignRepository extends JpaRepository<UsersXCampaignEn
     Optional<UsersXCampaignEntity>findByUser_Credentials_UsernameAndCampaign_PublicId(String username, UUID publicId);
 
     boolean existsByUserAndCampaign(UserEntity user, CampaignEntity campaign);
+
+    Optional<UsersXCampaignEntity> findByCampaign_PublicIdAndRole(UUID campaignPublicId, Role role);
 }
