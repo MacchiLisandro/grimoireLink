@@ -15,6 +15,6 @@ public class UpdateJournalRequest {
 
     private JournalEntryType journalEntryType;
 
-    @Size(max = 65535)
+    @Size(max = 65535, message = "La descripción no puede tener más de 65535 caracteres")
     private String description;
 }
