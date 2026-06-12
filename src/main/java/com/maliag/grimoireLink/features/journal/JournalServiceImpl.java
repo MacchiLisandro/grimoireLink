@@ -1,5 +1,7 @@
 package com.maliag.grimoireLink.features.journal;
 
+import com.maliag.grimoireLink.features.campaign.CampaignEntity;
+import com.maliag.grimoireLink.features.campaign.CampaignServiceImpl;
 import com.maliag.grimoireLink.features.journal.dto.JournalRequest;
 import com.maliag.grimoireLink.features.journal.dto.JournalResponse;
 import com.maliag.grimoireLink.features.journal.dto.UpdateJournalRequest;
@@ -22,6 +24,7 @@ public class JournalServiceImpl implements JournalService{
 
     private final JournalRepository repository;
     private final JournalMapper mapper;
+    private final CampaignServiceImpl campaignService;
 
     @Transactional(readOnly = true)
     public JournalEntity findByPublicId(UUID publicID){
@@ -53,7 +56,9 @@ public class JournalServiceImpl implements JournalService{
     @Override
     @Transactional
     public JournalResponse createJournal(JournalRequest request) {
+        CampaignEntity campaign = campaignService.findByPublicId(request.getCampaignId());
         JournalEntity journal = mapper.toEntity(request);
+        journal.setCampaign(campaign);
         return mapper.toResponse(repository.save(journal));
     }
 
