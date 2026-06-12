@@ -3,11 +3,18 @@ package com.maliag.grimoireLink.features.characters;
 
 import com.maliag.grimoireLink.features.background.BackgroundEntity;
 import com.maliag.grimoireLink.features.background.BackgroundRepository;
+import com.maliag.grimoireLink.features.background.exceptions.BackgroundNotFoundException;
 import com.maliag.grimoireLink.features.backgroundSkills.BackGroundSkillsEntity;
 import com.maliag.grimoireLink.features.backgroundSkills.BackgroundSkillsRepository;
+import com.maliag.grimoireLink.features.campaign.exceptions.CharacterAlreadyAliveException;
+import com.maliag.grimoireLink.features.campaign.exceptions.MembershipNotFoundException;
 import com.maliag.grimoireLink.features.characters.dto.CharacterCreateRequest;
 import com.maliag.grimoireLink.features.characters.dto.CharacterResponse;
 import com.maliag.grimoireLink.features.characters.dto.CharacterUpdateRequest;
+import com.maliag.grimoireLink.features.characters.exceptions.CharacterAccessDeniedException;
+import com.maliag.grimoireLink.features.characters.exceptions.CharacterNotFoundException;
+import com.maliag.grimoireLink.features.characters.exceptions.InvalidGoldAmountException;
+import com.maliag.grimoireLink.features.characters.exceptions.ResourceOwnershipException;
 import com.maliag.grimoireLink.features.dndapi.DnDApiService;
 import com.maliag.grimoireLink.features.dndapi.dto.ClassDetail;
 import com.maliag.grimoireLink.features.dndapi.dto.DndReference;
@@ -18,11 +25,15 @@ import com.maliag.grimoireLink.features.itemsXCharacter.ItemType;
 import com.maliag.grimoireLink.features.itemsXCharacter.ItemsXCharacterEntity;
 import com.maliag.grimoireLink.features.itemsXCharacter.ItemsXCharacterRepository;
 import com.maliag.grimoireLink.features.itemsXCharacter.dto.AddItemRequest;
+import com.maliag.grimoireLink.features.itemsXCharacter.exceptions.ItemAlreadyAddedException;
+import com.maliag.grimoireLink.features.itemsXCharacter.exceptions.ItemNotFoundException;
 import com.maliag.grimoireLink.features.skillsXCharacter.SkillsXCharacterEntity;
 import com.maliag.grimoireLink.features.skillsXCharacter.SkillsXCharacterRepository;
 import com.maliag.grimoireLink.features.spellsXCharacter.SpellsXCharacterEntity;
 import com.maliag.grimoireLink.features.spellsXCharacter.SpellsXCharacterRepository;
 import com.maliag.grimoireLink.features.spellsXCharacter.dto.AddSpellRequest;
+import com.maliag.grimoireLink.features.spellsXCharacter.exceptions.SpellAlreadyAddedException;
+import com.maliag.grimoireLink.features.spellsXCharacter.exceptions.SpellNotFoundException;
 import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignEntity;
 import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -65,17 +76,17 @@ public class CharacterServiceImpl implements CharacterService {
 
         UsersXCampaignEntity member=usersXCampaignRepository
                 .findByUser_Credentials_UsernameAndCampaign_PublicId(username,publicCampaingId)
-                .orElseThrow(()-> new EntityNotFoundException("No se encontro  jugador con la campaña"));
+                .orElseThrow(()-> new CharacterNotFoundException("No se encontro  jugador con la campaña"));
 
         boolean isAlive=characterRepository.existsByUsersXCampaignEntityAndStatus(member,CharacterStatus.ALIVE);
 
         if (isAlive){
-            throw  new EntityNotFoundException("No puede tener mas de un personaje vivo a la vez");
+            throw  new CharacterAlreadyAliveException("No puede tener mas de un personaje vivo a la vez");
         }
 
         BackgroundEntity background=backgroundRepository
                 .findBybackgroundIndex(request.getBackgroundIndex())
-                .orElseThrow(()->new EntityNotFoundException("No existe tal back"));
+                .orElseThrow(()->new BackgroundNotFoundException("No existe tal back"));
 
 
         ClassDetail classDetail=dnDApiService.getclassdetails(request.getClassIndex());
@@ -131,7 +142,7 @@ public class CharacterServiceImpl implements CharacterService {
 
         CharacterEntity character=characterRepository.
                 findBypublicId(CharacterPublicId)
-                .orElseThrow(()->new EntityNotFoundException("Personaje no encontrado"));
+                .orElseThrow(()->new CharacterNotFoundException("Personaje no encontrado"));
 
 
         validateAccess(character, username);
@@ -141,7 +152,7 @@ public class CharacterServiceImpl implements CharacterService {
 
     public CharacterEntity getCharacterByPublicId(UUID publicId){
         return characterRepository.findBypublicId(publicId)
-                .orElseThrow(()-> new EntityNotFoundException("Personaje no encontrado"));
+                .orElseThrow(()-> new CharacterNotFoundException("Personaje no encontrado"));
     }
 
     @Override
@@ -153,7 +164,7 @@ public class CharacterServiceImpl implements CharacterService {
                 .getName();
 
         usersXCampaignRepository.findByUser_Credentials_UsernameAndCampaign_PublicId(username,campaignPublicId)
-                .orElseThrow(()->new RuntimeException("Error, no hay acceso a la campaña"));
+                .orElseThrow(()->new MembershipNotFoundException("Error, no hay acceso a la campaña"));
 
         List<CharacterEntity>characters=characterRepository
                 .findByUsersXCampaignEntity_Campaign_PublicId(campaignPublicId);
@@ -174,7 +185,7 @@ public class CharacterServiceImpl implements CharacterService {
                 .getName();
 
         CharacterEntity character=characterRepository.findBypublicId(characterPublicId)
-                .orElseThrow(()->new EntityNotFoundException("No existe el personaje"));
+                .orElseThrow(()->new CharacterNotFoundException("No existe el personaje"));
         /// fijarse si solo dejamos el nombre para cambiar jajaj
 
         validateAccess(character,username);
@@ -194,7 +205,7 @@ public class CharacterServiceImpl implements CharacterService {
                 .getName();
 
         CharacterEntity character = characterRepository.findBypublicId(characterPublicId)
-                .orElseThrow(()->new EntityNotFoundException("Error, notfound"));
+                .orElseThrow(()->new CharacterNotFoundException("Error, character not found"));
 
         validateAccess(character,username);
 
@@ -211,7 +222,7 @@ public class CharacterServiceImpl implements CharacterService {
                 .getName();
 
         CharacterEntity character=characterRepository.findBypublicId(characterPublicId)
-                .orElseThrow(()->new EntityNotFoundException("No existe el jugador"));
+                .orElseThrow(()->new CharacterNotFoundException("Character not found"));
 
         validateAccess(character,username);
 
@@ -238,11 +249,11 @@ public class CharacterServiceImpl implements CharacterService {
                 .getName();
 
         CharacterEntity character=characterRepository.findBypublicId(characterPublicId)
-                .orElseThrow(()->new EntityNotFoundException("No existe el jugador"));
+                .orElseThrow(()->new CharacterNotFoundException("Character not found"));
 
         validateAccess(character,username);
 
-        if (newGold < 0) throw new IllegalArgumentException("El oro no puede ser negativo");
+        if (newGold < 0) throw new InvalidGoldAmountException("Gold cannot be negative");
 
         character.setGold(newGold);
         characterRepository.save(character);
@@ -258,7 +269,7 @@ public class CharacterServiceImpl implements CharacterService {
                 .getName();
 
         CharacterEntity character=characterRepository.findBypublicId(characterPublicId)
-                .orElseThrow(()->new EntityNotFoundException("Character not found"));
+                .orElseThrow(()->new CharacterNotFoundException("Character not found"));
 
         validateAccess(character,username);
 
@@ -266,14 +277,14 @@ public class CharacterServiceImpl implements CharacterService {
                 character.getClassIndex(), character.getLevel());
 
         if (slots == null) {
-            throw new IllegalArgumentException(
-                    "La clase " + character.getClassName() + " no puede lanzar hechizos");
+            throw new ResourceOwnershipException(
+                    "class" + character.getClassName() + "cant use spells");
         }
 
         boolean equipped=spellsXCharacterRepository.existsByCharacterAndSpellIndex(character, request.getSpellIndex());
 
         if (equipped){
-            throw new EntityNotFoundException("Error el hechizo ya existe dentro");
+            throw new SpellAlreadyAddedException("The spell is already added");
         }
         String spellname= dnDApiService.getSpellByIndex(request.getSpellIndex()).getName();
 
@@ -299,14 +310,14 @@ public class CharacterServiceImpl implements CharacterService {
                 .getName();
 
         CharacterEntity character=characterRepository.findBypublicId(characterPublicId)
-                .orElseThrow(()->new EntityNotFoundException("Character not found"));
+                .orElseThrow(()->new CharacterNotFoundException("Character not found"));
 
         validateAccess(character,username);
         SpellsXCharacterEntity spells=spellsXCharacterRepository.findByPublicId(spellPublicId)
-                .orElseThrow(()-> new EntityNotFoundException("Spell not exist"));
+                .orElseThrow(()-> new SpellNotFoundException("Spell not exist"));
 
         if (!spells.getCharacter().getId().equals(character.getId())){
-            throw new IllegalArgumentException("No le pertenece el hechizo");
+            throw new ResourceOwnershipException("The spell does not belong to this character");
         }
         spellsXCharacterRepository.delete(spells);
 
@@ -321,15 +332,15 @@ public class CharacterServiceImpl implements CharacterService {
             .getName();
 
     CharacterEntity character=characterRepository.findBypublicId(characterPublicId)
-            .orElseThrow(()-> new EntityNotFoundException("Character not found"));
+            .orElseThrow(()-> new CharacterNotFoundException("Character not found"));
 
     validateAccess(character,username);
 
     SpellsXCharacterEntity spell=spellsXCharacterRepository.findByPublicId(spellPublicId)
-            .orElseThrow(()->new EntityNotFoundException("Spell not exist"));
+            .orElseThrow(()->new SpellNotFoundException("Spell not exist"));
 
         if (!spell.getCharacter().getId().equals(character.getId())) {
-            throw new IllegalArgumentException("No le pertenece el hechizo");
+            throw new ResourceOwnershipException("The spell does not belong to this character");
         }
         spell.setPrepared(!spell.isPrepared());
         spellsXCharacterRepository.save(spell);
@@ -346,14 +357,14 @@ public class CharacterServiceImpl implements CharacterService {
                 .getName();
 
         CharacterEntity character=characterRepository.findBypublicId(characterPublicId)
-                .orElseThrow(()->new EntityNotFoundException("Character not found"));
+                .orElseThrow(()->new CharacterNotFoundException("Character not found"));
 
         validateAccess(character,username);
 
         boolean alreadyHave=itemsXCharacterRepository
                 .existsByCharacterAndItemIndexAndItemType(character,request.getItemIndex(),request.getItemType());
 
-        if (alreadyHave)throw new IllegalArgumentException("character already have this item");
+        if (alreadyHave)throw new ItemAlreadyAddedException("character already have this item");
 
         String itemname=resolveItemName(request.getItemIndex(),request.getItemType());
 
@@ -378,15 +389,15 @@ public class CharacterServiceImpl implements CharacterService {
                 .getName();
 
         CharacterEntity character=characterRepository.findBypublicId(characterPublicId)
-                .orElseThrow(()->new EntityNotFoundException("Character not found"));
+                .orElseThrow(()->new CharacterNotFoundException("Character not found"));
 
         validateAccess(character,username);
 
         ItemsXCharacterEntity item=itemsXCharacterRepository.findByPublicId(itemPublicId)
-                .orElseThrow(()->new EntityNotFoundException("item not found"));
+                .orElseThrow(()->new ItemNotFoundException("item not found"));
 
         if (!item.getCharacter().getId().equals(character.getId())){
-            throw new IllegalArgumentException("No le pertenece el item");
+            throw new ResourceOwnershipException("No le pertenece el item");
         }
         itemsXCharacterRepository.delete(item);
 
@@ -411,7 +422,7 @@ public class CharacterServiceImpl implements CharacterService {
                 .orElseThrow(()->new EntityNotFoundException("item not exist"));
 
         if (!item.getCharacter().getId().equals(character.getId())) {
-            throw new IllegalArgumentException("No le pertenece el item");
+            throw new IllegalArgumentException("The item does not belong to this character");
         }
         item.setEquipped(!item.getEquipped());
         itemsXCharacterRepository.save(item);
@@ -478,7 +489,7 @@ public class CharacterServiceImpl implements CharacterService {
 
         usersXCampaignRepository
                 .findByUser_Credentials_UsernameAndCampaign_PublicId(username, publicCampaign)
-                .orElseThrow(() -> new EntityNotFoundException("No tenés acceso a este personaje"));
+                .orElseThrow(() -> new CharacterAccessDeniedException("You dont have access to this character"));
     }
 
         /// ////////////////para resolver que tipo de items es lo que trae////////////////////////////////////////////
