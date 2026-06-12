@@ -34,10 +34,11 @@ import com.maliag.grimoireLink.features.spellsXCharacter.exceptions.SpellNotFoun
 import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignEntity;
 import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -131,30 +132,28 @@ public class CharacterServiceImpl implements CharacterService {
     }
 ///   ////////////////////////////////////Gets Response//////////////////////////////////////////////////////////////////////////
     @Override
-    @Transactional
-    public CharacterResponse getCharacterById(UUID CharacterPublicId) {
+    @Transactional(readOnly = true)
+    public CharacterResponse getCharacterByPublicId(UUID characterPublicId, UUID campaignPublicId) {
 
         String username=SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
 
-        CharacterEntity character=characterRepository.
-                findBypublicId(CharacterPublicId)
-                .orElseThrow(()->new CharacterNotFoundException("Personaje no encontrado"));
+        usersXCampaignRepository.findByUser_Credentials_UsernameAndCampaign_PublicId(username,campaignPublicId)
+                .orElseThrow(()->new MembershipNotFoundException("Error, no hay acceso a la campaña"));
 
-
-        validateAccess(character, username);
+        CharacterEntity character=findCharacterByPublicId(characterPublicId);
 
         return buildResponse(character);
     }
-/// ////////////////////////////////GETS Entity///////////////////////////////////////////////////////////////////
-    public CharacterEntity getCharacterByPublicId(UUID publicId){
+
+    public CharacterEntity findCharacterByPublicId(UUID publicId){
         return characterRepository.findBypublicId(publicId)
                 .orElseThrow(()-> new CharacterNotFoundException("Personaje no encontrado"));
     }
 /// /////////////////////////////Get Character by Campaing///////////////////////////////////////////////////////////
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<CharacterResponse> getCharacterByCampaing(UUID campaignPublicId) {
 
         String username=SecurityContextHolder.getContext()

@@ -15,9 +15,9 @@ public interface CharacterService {
 
     CharacterResponse createCharacter(CharacterCreateRequest request,UUID campaingPublicID);
 
-    CharacterResponse getCharacterById(UUID CharacterPublicId);
+    CharacterResponse getCharacterByPublicId(UUID characterPublicId, UUID campaignPublicId);
 
-    CharacterEntity getCharacterByPublicId(UUID publicId);
+    CharacterEntity findCharacterByPublicId(UUID publicId);
 
     List<CharacterResponse> getCharacterByCampaing(UUID campaignPublicId);
 
