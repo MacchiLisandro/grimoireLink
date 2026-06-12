@@ -70,7 +70,7 @@ public class EncounterServiceImpl implements EncounterService {
         if (alreadyInEncounter) {
             throw new CharacterAlreadyInEncounterException("Character already in encounter");
         }
-        encounter.getCharacters().add(characterService.getCharacterByPublicId(characterId));
+        encounter.getCharacters().add(characterService.findCharacterByPublicId(characterId));
         return encounterMapper.toResponse(encounter);
     }
 

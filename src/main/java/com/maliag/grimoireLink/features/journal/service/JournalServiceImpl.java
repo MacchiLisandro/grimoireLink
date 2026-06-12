@@ -1,7 +1,11 @@
-package com.maliag.grimoireLink.features.journal;
+package com.maliag.grimoireLink.features.journal.service;
 
 import com.maliag.grimoireLink.features.campaign.model.CampaignEntity;
 import com.maliag.grimoireLink.features.campaign.service.CampaignServiceImpl;
+import com.maliag.grimoireLink.features.journal.model.JournalEntity;
+import com.maliag.grimoireLink.features.journal.enums.JournalEntryType;
+import com.maliag.grimoireLink.features.journal.mapper.JournalMapper;
+import com.maliag.grimoireLink.features.journal.repository.JournalRepository;
 import com.maliag.grimoireLink.features.journal.dto.JournalRequest;
 import com.maliag.grimoireLink.features.journal.dto.JournalResponse;
 import com.maliag.grimoireLink.features.journal.dto.UpdateJournalRequest;
@@ -16,11 +20,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.maliag.grimoireLink.features.journal.JournalSpecifications.*;
+import static com.maliag.grimoireLink.features.journal.specification.JournalSpecifications.*;
 
 @Service
 @RequiredArgsConstructor
-public class JournalServiceImpl implements JournalService{
+public class JournalServiceImpl implements JournalService {
 
     private final JournalRepository repository;
     private final JournalMapper mapper;

@@ -4,8 +4,11 @@ import com.maliag.grimoireLink.features.background.BackgroundEntity;
 import com.maliag.grimoireLink.features.characters.dto.CharacterCreateRequest;
 import com.maliag.grimoireLink.features.characters.dto.CharacterItemResponse;
 import com.maliag.grimoireLink.features.characters.dto.CharacterResponse;
+import com.maliag.grimoireLink.features.dndapi.dto.SpellcastingSlots;
 import com.maliag.grimoireLink.features.featuresXCharacter.FeatureXCharacterEntity;
 import com.maliag.grimoireLink.features.itemsXCharacter.ItemsXCharacterEntity;
+import com.maliag.grimoireLink.features.skillsXCharacter.SkillsXCharacterEntity;
+import com.maliag.grimoireLink.features.skillsXCharacter.dto.CharacterSkillResponse;
 import com.maliag.grimoireLink.features.spellsXCharacter.SpellsXCharacterEntity;
 import com.maliag.grimoireLink.features.spellsXCharacter.dto.SpellResponse;
 import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignEntity;
@@ -22,7 +25,9 @@ public class CharacterMapper {
     public CharacterResponse toResponse(CharacterEntity character,
                                         List<SpellsXCharacterEntity> spells,
                                         List<FeatureXCharacterEntity> features,
-                                        List<ItemsXCharacterEntity> items){
+                                        List<ItemsXCharacterEntity> items,
+                                        List<SkillsXCharacterEntity>skills,
+                                        SpellcastingSlots spellSlots){
 
         int proficiencyBonus=proficiencyBonus(character.getLevel());
 
@@ -59,6 +64,8 @@ public class CharacterMapper {
                 .knowSpells(mapSpells(spells))
                 .featureIndices(mapFeatures(features))
                 .items(mapItems(items))
+                .skills(mapSkills(skills))
+                .spellSlots(spellSlots)
                 /// Su hoja de personaje
                 .summary(buildHojaPersonaje(character,proficiencyBonus))
                 .build();
@@ -175,7 +182,24 @@ public class CharacterMapper {
         }
         return resultado;
     }
+    /// ////////////////////////////////////////////////////////////////////////////////////
+    private List<CharacterSkillResponse> mapSkills(List<SkillsXCharacterEntity> skills){
+        List<CharacterSkillResponse> resultado = new ArrayList<>();
+        if (skills == null) return resultado;
 
+        for (SkillsXCharacterEntity skill : skills){
+            CharacterSkillResponse dto = CharacterSkillResponse.builder()
+                    .publicId(skill.getPublicId())
+                    .skillIndex(skill.getSkillIndex())
+                    .name(skill.getName())
+                    .proficiency(skill.getProficiency())
+                    .build();
+            resultado.add(dto);
+        }
+        return resultado;
+    }
+
+    /// //////////////////////////////////////////////////////////////////////////////////////
     private String buildHojaPersonaje(CharacterEntity character, int proefBonus){
         return String.format(
                 "%s — %s %s nivel %d (PB +%d)",

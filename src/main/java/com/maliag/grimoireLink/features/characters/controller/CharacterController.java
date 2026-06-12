@@ -39,8 +39,9 @@ public class CharacterController {
     }
 
     @GetMapping("/{characterId}")
-    public CharacterResponse getCharacterById(@PathVariable UUID characterId){
-        return characterService.getCharacterById(characterId);
+    public CharacterResponse getCharacterById(@PathVariable UUID characterId,
+                                              @RequestParam UUID campaignPublicId){
+        return characterService.getCharacterByPublicId(characterId, campaignPublicId);
     }
 
     @PatchMapping("/{characterId}")
@@ -81,9 +82,9 @@ public class CharacterController {
     @DeleteMapping("/{characterId}/spell/{spellId}")
     @ResponseStatus(HttpStatus.OK)
     public CharacterResponse removeSpell(@PathVariable UUID characterId,
-                                         @PathVariable UUID spellid){
+                                         @PathVariable UUID spellId){
 
-        return characterService.removeSpell(characterId,spellid);
+        return characterService.removeSpell(characterId,spellId);
     }
 
     @PatchMapping("/{characterId}/spells/{spellId}/prepare")
