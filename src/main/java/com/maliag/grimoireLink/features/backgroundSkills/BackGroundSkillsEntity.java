@@ -1,6 +1,6 @@
 package com.maliag.grimoireLink.features.backgroundSkills;
 
-import com.maliag.grimoireLink.features.background.BackgroundEntity;
+import com.maliag.grimoireLink.features.background.model.BackgroundEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

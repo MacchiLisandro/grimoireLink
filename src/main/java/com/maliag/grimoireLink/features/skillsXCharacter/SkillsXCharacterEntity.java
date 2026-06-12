@@ -1,8 +1,10 @@
 package com.maliag.grimoireLink.features.skillsXCharacter;
 
-import com.maliag.grimoireLink.features.characters.CharacterEntity;
+import com.maliag.grimoireLink.features.characters.model.CharacterEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.UUID;
 
@@ -24,6 +26,7 @@ public class SkillsXCharacterEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "character_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private CharacterEntity character;
 
     @Column(name = "skill_index", nullable = false)

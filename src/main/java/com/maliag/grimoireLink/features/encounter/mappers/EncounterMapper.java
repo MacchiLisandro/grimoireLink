@@ -1,6 +1,6 @@
 package com.maliag.grimoireLink.features.encounter.mappers;
 
-import com.maliag.grimoireLink.features.characters.CharacterSummaryMapper;
+import com.maliag.grimoireLink.features.characters.mapper.CharacterSummaryMapper;
 import com.maliag.grimoireLink.features.encounter.dto.EncounterRequest;
 import com.maliag.grimoireLink.features.encounter.dto.EncounterResponse;
 import com.maliag.grimoireLink.features.encounter.models.EncounterEntity;

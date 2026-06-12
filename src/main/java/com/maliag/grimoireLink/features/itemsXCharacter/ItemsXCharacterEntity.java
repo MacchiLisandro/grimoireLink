@@ -1,9 +1,8 @@
 package com.maliag.grimoireLink.features.itemsXCharacter;
 
-import com.maliag.grimoireLink.features.characters.CharacterEntity;
+import com.maliag.grimoireLink.features.characters.model.CharacterEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.apache.commons.lang3.builder.HashCodeExclude;
 
 import java.util.UUID;
 

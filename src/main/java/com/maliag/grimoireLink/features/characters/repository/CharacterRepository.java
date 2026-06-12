@@ -1,5 +1,7 @@
-package com.maliag.grimoireLink.features.characters;
+package com.maliag.grimoireLink.features.characters.repository;
 
+import com.maliag.grimoireLink.features.characters.enums.CharacterStatus;
+import com.maliag.grimoireLink.features.characters.model.CharacterEntity;
 import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

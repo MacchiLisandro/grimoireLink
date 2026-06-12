@@ -1,9 +1,11 @@
-package com.maliag.grimoireLink.features.characters;
+package com.maliag.grimoireLink.features.characters.service;
 
 
 import com.maliag.grimoireLink.features.characters.dto.CharacterCreateRequest;
 import com.maliag.grimoireLink.features.characters.dto.CharacterResponse;
 import com.maliag.grimoireLink.features.characters.dto.CharacterUpdateRequest;
+import com.maliag.grimoireLink.features.characters.dto.LevelUpRequest;
+import com.maliag.grimoireLink.features.characters.model.CharacterEntity;
 import com.maliag.grimoireLink.features.itemsXCharacter.dto.AddItemRequest;
 import com.maliag.grimoireLink.features.spellsXCharacter.dto.AddSpellRequest;
 
@@ -29,6 +31,7 @@ public interface CharacterService {
 
     CharacterResponse updateGold(UUID characterPublicId, int newGold);
 
+    CharacterResponse levelUp(UUID characterPublicId, LevelUpRequest request);
 
     ///spells
     CharacterResponse addSpell(UUID characterPublicId, AddSpellRequest request);

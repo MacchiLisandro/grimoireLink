@@ -4,6 +4,8 @@ import com.maliag.grimoireLink.features.campaign.model.CampaignEntity;
 import com.maliag.grimoireLink.features.users.models.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
@@ -22,6 +24,7 @@ public class UsersXCampaignEntity {
 
     @ManyToOne
     @JoinColumn(name = "campaign_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private CampaignEntity campaign;
 
     @ManyToOne

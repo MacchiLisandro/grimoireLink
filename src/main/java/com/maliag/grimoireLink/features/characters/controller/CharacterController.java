@@ -1,17 +1,15 @@
 package com.maliag.grimoireLink.features.characters.controller;
 
-import com.maliag.grimoireLink.features.characters.CharacterService;
+import com.maliag.grimoireLink.features.characters.service.CharacterService;
 import com.maliag.grimoireLink.features.characters.dto.CharacterCreateRequest;
 import com.maliag.grimoireLink.features.characters.dto.CharacterResponse;
 import com.maliag.grimoireLink.features.characters.dto.CharacterUpdateRequest;
-import com.maliag.grimoireLink.features.itemsXCharacter.ItemsXCharacterEntity;
+import com.maliag.grimoireLink.features.characters.dto.LevelUpRequest;
 import com.maliag.grimoireLink.features.itemsXCharacter.dto.AddItemRequest;
 import com.maliag.grimoireLink.features.spellsXCharacter.dto.AddSpellRequest;
-import com.maliag.grimoireLink.features.spellsXCharacter.dto.SpellResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.parameters.P;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +23,8 @@ import java.util.UUID;
 public class CharacterController {
 
     private final CharacterService characterService;
+
+
 /// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -57,6 +57,13 @@ public class CharacterController {
     }
 /// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+    @PatchMapping("/{characterId}/levelup")
+    public CharacterResponse levelUp(@PathVariable UUID characterId,
+                                     @Valid @RequestBody LevelUpRequest request){
+
+    return characterService.levelUp(characterId,request);
+    }
 
 
 @PatchMapping("/{characterId}/hp")
