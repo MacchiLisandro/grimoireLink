@@ -39,8 +39,9 @@ public class CharacterController {
     }
 
     @GetMapping("/{characterId}")
-    public CharacterResponse getCharacterById(@PathVariable UUID characterId){
-        return characterService.getCharacterById(characterId);
+    public CharacterResponse getCharacterById(@PathVariable UUID characterId,
+                                              @RequestParam UUID campaignPublicId){
+        return characterService.getCharacterByPublicId(characterId, campaignPublicId);
     }
 
     @PatchMapping("/{characterId}")
