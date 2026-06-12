@@ -1,7 +1,7 @@
 package com.maliag.grimoireLink.features.journal.dto;
 
 import com.maliag.grimoireLink.features.campaign.dto.CampaignResponse;
-import com.maliag.grimoireLink.features.journal.JournalEntryType;
+import com.maliag.grimoireLink.features.journal.enums.JournalEntryType;
 import lombok.Builder;
 import lombok.Data;
 

@@ -1,5 +1,7 @@
-package com.maliag.grimoireLink.features.journal;
+package com.maliag.grimoireLink.features.journal.specification;
 
+import com.maliag.grimoireLink.features.journal.model.JournalEntity;
+import com.maliag.grimoireLink.features.journal.enums.JournalEntryType;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDateTime;
