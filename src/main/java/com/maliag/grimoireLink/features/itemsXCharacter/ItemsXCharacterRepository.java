@@ -1,6 +1,6 @@
 package com.maliag.grimoireLink.features.itemsXCharacter;
 
-import com.maliag.grimoireLink.features.characters.CharacterEntity;
+import com.maliag.grimoireLink.features.characters.model.CharacterEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

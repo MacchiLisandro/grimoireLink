@@ -1,5 +1,6 @@
-package com.maliag.grimoireLink.features.background;
+package com.maliag.grimoireLink.features.background.repository;
 
+import com.maliag.grimoireLink.features.background.model.BackgroundEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

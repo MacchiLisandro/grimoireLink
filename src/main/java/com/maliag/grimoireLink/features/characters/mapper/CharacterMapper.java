@@ -1,9 +1,10 @@
-package com.maliag.grimoireLink.features.characters;
+package com.maliag.grimoireLink.features.characters.mapper;
 
-import com.maliag.grimoireLink.features.background.BackgroundEntity;
+import com.maliag.grimoireLink.features.background.model.BackgroundEntity;
 import com.maliag.grimoireLink.features.characters.dto.CharacterCreateRequest;
 import com.maliag.grimoireLink.features.characters.dto.CharacterItemResponse;
 import com.maliag.grimoireLink.features.characters.dto.CharacterResponse;
+import com.maliag.grimoireLink.features.characters.model.CharacterEntity;
 import com.maliag.grimoireLink.features.dndapi.dto.SpellcastingSlots;
 import com.maliag.grimoireLink.features.featuresXCharacter.FeatureXCharacterEntity;
 import com.maliag.grimoireLink.features.itemsXCharacter.ItemsXCharacterEntity;

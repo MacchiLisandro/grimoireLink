@@ -1,4 +1,4 @@
-package com.maliag.grimoireLink.features.background;
+package com.maliag.grimoireLink.features.background.model;
 
 import jakarta.persistence.*;
 import lombok.*;

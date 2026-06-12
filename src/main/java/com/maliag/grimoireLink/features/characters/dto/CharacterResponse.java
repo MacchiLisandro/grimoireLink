@@ -1,13 +1,11 @@
 package com.maliag.grimoireLink.features.characters.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.maliag.grimoireLink.features.characters.CharacterStatus;
+import com.maliag.grimoireLink.features.characters.enums.CharacterStatus;
 import com.maliag.grimoireLink.features.dndapi.dto.SpellcastingSlots;
 import com.maliag.grimoireLink.features.skillsXCharacter.dto.CharacterSkillResponse;
 import com.maliag.grimoireLink.features.spellsXCharacter.dto.SpellResponse;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

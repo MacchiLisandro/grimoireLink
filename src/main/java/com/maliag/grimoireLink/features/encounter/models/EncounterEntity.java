@@ -1,7 +1,7 @@
 package com.maliag.grimoireLink.features.encounter.models;
 
 import com.maliag.grimoireLink.features.campaign.model.CampaignEntity;
-import com.maliag.grimoireLink.features.characters.CharacterEntity;
+import com.maliag.grimoireLink.features.characters.model.CharacterEntity;
 import com.maliag.grimoireLink.features.encounter.enums.EncounterDifficulty;
 import com.maliag.grimoireLink.features.encounter.enums.EncounterStatus;
 import com.maliag.grimoireLink.features.encounter.enums.EncounterType;

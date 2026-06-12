@@ -2,7 +2,7 @@ package com.maliag.grimoireLink.features.encounter.services;
 
 import com.maliag.grimoireLink.features.campaign.model.CampaignEntity;
 import com.maliag.grimoireLink.features.campaign.service.CampaignService;
-import com.maliag.grimoireLink.features.characters.CharacterService;
+import com.maliag.grimoireLink.features.characters.service.CharacterService;
 import com.maliag.grimoireLink.features.encounter.exceptions.MonsterNotInEncounterException;
 import com.maliag.grimoireLink.features.encounter.models.EncounterEntity;
 import com.maliag.grimoireLink.features.encounter.mappers.EncounterMapper;

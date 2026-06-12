@@ -1,7 +1,8 @@
-package com.maliag.grimoireLink.features.characters;
+package com.maliag.grimoireLink.features.characters.model;
 
+import com.maliag.grimoireLink.features.characters.enums.CharacterStatus;
 import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignEntity;
-import com.maliag.grimoireLink.features.background.BackgroundEntity;
+import com.maliag.grimoireLink.features.background.model.BackgroundEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
