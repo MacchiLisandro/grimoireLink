@@ -1,14 +1,13 @@
-package com.maliag.grimoireLink.features.campaign;
+package com.maliag.grimoireLink.features.campaign.controller;
 
+import com.maliag.grimoireLink.features.campaign.service.CampaignService;
 import com.maliag.grimoireLink.features.campaign.dto.CampaignRequest;
 import com.maliag.grimoireLink.features.campaign.dto.CampaignResponse;
 import com.maliag.grimoireLink.features.campaign.dto.UpdateCampaignRequest;
-import com.maliag.grimoireLink.features.encounter.dto.EncounterResponse;
 import com.maliag.grimoireLink.features.usersXCampaign.dto.CampaignMemberResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,11 +28,10 @@ public class CampaignController {
         return service.getByPublicId(publicId);
     }
 
-    ///cambiar por jwt
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<CampaignResponse> getCampaignsByUserPublicId(@RequestParam UUID userPublicId){
-        return service.getAllCampaignsByUserId(userPublicId);
+    public List<CampaignResponse> getCampaignsByUser(){
+        return service.getAllCampaignsByUser();
     }
 
     @GetMapping("/{publicId}/members")

@@ -1,6 +1,6 @@
 package com.maliag.grimoireLink.features.campaign.dto;
 
-import com.maliag.grimoireLink.features.campaign.CampaignStatus;
+import com.maliag.grimoireLink.features.campaign.enums.CampaignStatus;
 import lombok.Builder;
 import lombok.Data;
 

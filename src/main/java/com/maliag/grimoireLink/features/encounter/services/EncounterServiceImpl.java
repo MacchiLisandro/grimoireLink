@@ -1,7 +1,7 @@
 package com.maliag.grimoireLink.features.encounter.services;
 
-import com.maliag.grimoireLink.features.campaign.CampaignEntity;
-import com.maliag.grimoireLink.features.campaign.CampaignService;
+import com.maliag.grimoireLink.features.campaign.model.CampaignEntity;
+import com.maliag.grimoireLink.features.campaign.service.CampaignService;
 import com.maliag.grimoireLink.features.characters.CharacterService;
 import com.maliag.grimoireLink.features.encounter.exceptions.MonsterNotInEncounterException;
 import com.maliag.grimoireLink.features.encounter.models.EncounterEntity;
@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 
 @Service

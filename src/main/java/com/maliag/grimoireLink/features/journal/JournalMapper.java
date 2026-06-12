@@ -1,6 +1,6 @@
 package com.maliag.grimoireLink.features.journal;
 
-import com.maliag.grimoireLink.features.campaign.CampaignMapper;
+import com.maliag.grimoireLink.features.campaign.mapper.CampaignMapper;
 import com.maliag.grimoireLink.features.journal.dto.JournalRequest;
 import com.maliag.grimoireLink.features.journal.dto.JournalResponse;
 import org.mapstruct.Mapper;
