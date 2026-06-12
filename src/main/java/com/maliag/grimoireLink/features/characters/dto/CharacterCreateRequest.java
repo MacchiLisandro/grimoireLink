@@ -15,8 +15,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CharacterCreateRequest {
 
-    @NotNull(message = "Error, se necesita una membresia de camapaña")
-    private Long pxcId;
 
     @NotBlank(message = "Debe de elegir un nombre")
     private String name;
