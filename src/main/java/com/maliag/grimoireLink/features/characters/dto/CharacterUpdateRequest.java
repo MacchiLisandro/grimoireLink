@@ -8,7 +8,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class CharacterUpdateRequest {
 
-    @NotBlank(message = "Tiene que tener un nuevo nombre")
+    @NotBlank(message = "the name must be change")
     private String name;
 
 

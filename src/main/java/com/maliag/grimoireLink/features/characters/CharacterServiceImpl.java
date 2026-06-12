@@ -1,6 +1,5 @@
 package com.maliag.grimoireLink.features.characters;
 
-
 import com.maliag.grimoireLink.features.background.BackgroundEntity;
 import com.maliag.grimoireLink.features.background.BackgroundRepository;
 import com.maliag.grimoireLink.features.background.exceptions.BackgroundNotFoundException;
@@ -11,10 +10,8 @@ import com.maliag.grimoireLink.features.campaign.exceptions.MembershipNotFoundEx
 import com.maliag.grimoireLink.features.characters.dto.CharacterCreateRequest;
 import com.maliag.grimoireLink.features.characters.dto.CharacterResponse;
 import com.maliag.grimoireLink.features.characters.dto.CharacterUpdateRequest;
-import com.maliag.grimoireLink.features.characters.exceptions.CharacterAccessDeniedException;
-import com.maliag.grimoireLink.features.characters.exceptions.CharacterNotFoundException;
-import com.maliag.grimoireLink.features.characters.exceptions.InvalidGoldAmountException;
-import com.maliag.grimoireLink.features.characters.exceptions.ResourceOwnershipException;
+import com.maliag.grimoireLink.features.characters.dto.LevelUpRequest;
+import com.maliag.grimoireLink.features.characters.exceptions.*;
 import com.maliag.grimoireLink.features.dndapi.DnDApiService;
 import com.maliag.grimoireLink.features.dndapi.dto.ClassDetail;
 import com.maliag.grimoireLink.features.dndapi.dto.DndReference;
@@ -45,7 +42,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -66,6 +65,8 @@ public class CharacterServiceImpl implements CharacterService {
     private final DnDApiService dnDApiService;
 
 
+    ////////////////////////////////Create Character////////////////////////////////////////////////////////////////////
+
     @Override
     @Transactional
     public CharacterResponse createCharacter(CharacterCreateRequest request,
@@ -77,18 +78,17 @@ public class CharacterServiceImpl implements CharacterService {
 
         UsersXCampaignEntity member=usersXCampaignRepository
                 .findByUser_Credentials_UsernameAndCampaign_PublicId(username,publicCampaingId)
-                .orElseThrow(()-> new CharacterNotFoundException("No se encontro  jugador con la campaña"));
+                .orElseThrow(()-> new CharacterNotFoundException("Player not found in campaign"));
 
         boolean isAlive=characterRepository.existsByUsersXCampaignEntityAndStatus(member,CharacterStatus.ALIVE);
 
         if (isAlive){
-            throw  new CharacterAlreadyAliveException("No puede tener mas de un personaje vivo a la vez");
+            throw  new CharacterAlreadyAliveException("cant have two characters alive in the same campaign");
         }
 
         BackgroundEntity background=backgroundRepository
                 .findBybackgroundIndex(request.getBackgroundIndex())
-                .orElseThrow(()->new BackgroundNotFoundException("No existe tal back"));
-
+                .orElseThrow(()->new BackgroundNotFoundException("Background not found"));
 
         ClassDetail classDetail=dnDApiService.getclassdetails(request.getClassIndex());
         String className=classDetail.getName();
@@ -129,10 +129,8 @@ public class CharacterServiceImpl implements CharacterService {
 
 
         return characterMapper.toResponse(character,List.of(),features,List.of(),skills,spellSlots);
-
-
     }
-
+///   ////////////////////////////////////Gets Response//////////////////////////////////////////////////////////////////////////
     @Override
     @Transactional(readOnly = true)
     public CharacterResponse getCharacterByPublicId(UUID characterPublicId, UUID campaignPublicId) {
@@ -153,7 +151,7 @@ public class CharacterServiceImpl implements CharacterService {
         return characterRepository.findBypublicId(publicId)
                 .orElseThrow(()-> new CharacterNotFoundException("Personaje no encontrado"));
     }
-
+/// /////////////////////////////Get Character by Campaing///////////////////////////////////////////////////////////
     @Override
     @Transactional(readOnly = true)
     public List<CharacterResponse> getCharacterByCampaing(UUID campaignPublicId) {
@@ -174,7 +172,7 @@ public class CharacterServiceImpl implements CharacterService {
         }
         return response;
     }
-
+/// ///////////////////////////////Update Name//////////////////////////////////////////////////////////////
     @Override
     @Transactional
     public CharacterResponse updateCharacter(UUID characterPublicId, CharacterUpdateRequest request) {
@@ -184,8 +182,7 @@ public class CharacterServiceImpl implements CharacterService {
                 .getName();
 
         CharacterEntity character=characterRepository.findBypublicId(characterPublicId)
-                .orElseThrow(()->new CharacterNotFoundException("No existe el personaje"));
-        /// fijarse si solo dejamos el nombre para cambiar jajaj
+                .orElseThrow(()->new CharacterNotFoundException("Character not found"));
 
         validateAccess(character,username);
 
@@ -194,7 +191,7 @@ public class CharacterServiceImpl implements CharacterService {
 
         return buildResponse(character); 
     }
-
+////////////////////////////////////Delete(cambia el enum)//////////////////////////////////////////////////////////////////
     @Transactional
     @Override
     public void deleteCharacter(UUID characterPublicId) {
@@ -211,7 +208,7 @@ public class CharacterServiceImpl implements CharacterService {
         character.setStatus(CharacterStatus.DEAD);
         characterRepository.save(character);
     }
-
+/// //////////////////////////////Update hp/////////////////////////////////////////////////////////////////////
     @Transactional
     @Override
     public CharacterResponse updateHp(UUID characterPublicId, int newHp) {
@@ -238,7 +235,7 @@ public class CharacterServiceImpl implements CharacterService {
 
         return buildResponse(character);
     }
-
+/// /////////////////////////////////////Update gold///////////////////////////////////////////////////////////////////////////
     @Transactional
     @Override
     public CharacterResponse updateGold(UUID characterPublicId, int newGold) {
@@ -259,7 +256,72 @@ public class CharacterServiceImpl implements CharacterService {
 
         return buildResponse(character); 
     }
-/// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// ////////////////////////////////////////Level Up////////////////////////////////////////////////////////////////////////////
+    @Override
+    public CharacterResponse levelUp(UUID characterPublicId, LevelUpRequest request) {
+        String username=SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        CharacterEntity character=characterRepository.findBypublicId(characterPublicId)
+                .orElseThrow(()-> new CharacterNotFoundException("Character not found"));
+
+        validateAccess(character,username);
+
+        int oldLevel=character.getLevel();
+        int newLevel=request.getNewLevel();
+
+        if (newLevel <= oldLevel){
+            throw new InvalidLevelException("the new level must be higher than current one");
+        }
+
+        ClassDetail classDetail=dnDApiService.getclassdetails(character.getClassIndex());
+        int hitDice=classDetail.getHitdice();
+        int conMod=Math.floorDiv(character.getConstitution() -10,2);
+        int avgXLvl=(hitDice / 2) + 1;
+        int hpIncrese=(newLevel - oldLevel) * (avgXLvl + conMod);
+
+        character.setMaxHp(character.getMaxHp() + hpIncrese);
+        character.setCurrentHp(character.getCurrentHp() + hpIncrese);
+
+        if (character.getStatus() == CharacterStatus.UNCONSCIOUS && character.getCurrentHp() > 0){
+            character.setStatus(CharacterStatus.ALIVE);
+        }
+        character.setLevel(newLevel);
+
+        if (character.getSubclassIndex() == null && request.getSubclassIndex() != null){
+            String subclassName=dnDApiService.getSubclass(request.getSubclassIndex()).getName();
+            character.setSubclassIndex(request.getSubclassIndex());
+            character.setSubclassName(subclassName);
+        }
+
+        characterRepository.save(character);
+
+        List<DndReference>allFeaturesUpToNewLevel=dnDApiService.getFeaturesForClass(character.getClassIndex(),newLevel);
+
+        Set<String> existingIndexes=featureXCharacterRepository.findByCharacter(character)
+                .stream()
+                .map(FeatureXCharacterEntity::getFeatureIndex)
+                .collect(Collectors.toSet());
+
+        List<FeatureXCharacterEntity>newFeatures=new ArrayList<>();
+        for (DndReference r: allFeaturesUpToNewLevel){
+            if (!existingIndexes.contains(r.getIndex())){
+                newFeatures.add(FeatureXCharacterEntity.builder()
+                        .character(character)
+                        .featureIndex(r.getIndex())
+                        .name(r.getName())
+                        .source("CLASS")
+                        .build());
+            }
+        }
+        featureXCharacterRepository.saveAll(newFeatures);
+
+        return buildResponse(character);
+    }
+
+
+    //////////////////////////////////Spells CRUD //////////////////////////////////////////////////////////////////////
     @Override
     public CharacterResponse addSpell(UUID characterPublicId, AddSpellRequest request) {
 
@@ -299,7 +361,7 @@ public class CharacterServiceImpl implements CharacterService {
     }
 
 
-    ///  terminar metodos
+
     @Override
     //@Transactional? dirty check o no?
     public CharacterResponse removeSpell(UUID characterPublicId, UUID spellPublicId) {
@@ -347,7 +409,9 @@ public class CharacterServiceImpl implements CharacterService {
         return buildResponse(character);
 
     }
+/// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/// /////////////////////////////CRUD ITEM /////////////////////////////////////////////////////////////////////////////
     @Override
     public CharacterResponse addItem(UUID characterPublicId, AddItemRequest request) {
 
@@ -430,9 +494,13 @@ public class CharacterServiceImpl implements CharacterService {
 
 
     }
+/// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/// //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// Helper para no repetir codigo al dope///////////////////
+
+
+    /// Helper para no repetir codigo///////////////////
+
     private CharacterResponse buildResponse(CharacterEntity character) {
         List<SpellsXCharacterEntity> spells =
                 spellsXCharacterRepository.findByCharacter(character);
@@ -449,7 +517,7 @@ public class CharacterServiceImpl implements CharacterService {
         return characterMapper.toResponse(character, spells, features, items,skills,spellSlots);
     }
 
-    /// /////////////////////////////////////////////////////////
+    /// //////////////////////////////Build Features////////////////////////////////////////////////////////////////////////////
     private List<FeatureXCharacterEntity> buildFeatures(
             CharacterEntity character, List<DndReference> references, String source) {
         List<FeatureXCharacterEntity> features = new ArrayList<>();
@@ -463,7 +531,7 @@ public class CharacterServiceImpl implements CharacterService {
         }
         return features;
     }
-    /// ///////////////////////////////////////////////////////////////////////////////////////
+    /// ///////////////////////////////Build Backs////////////////////////////////////////////////////////////////////////////
     private List<SkillsXCharacterEntity> buildBackgroundSkills(
             CharacterEntity character, BackgroundEntity background) {
         List<SkillsXCharacterEntity> skills = new ArrayList<>();
@@ -482,7 +550,7 @@ public class CharacterServiceImpl implements CharacterService {
         return skills;
     }
 
-    /// //////////////////////////////////////////////////////////
+    /// ///////////////////////////////////Security//////////////////////////////////////////////////////////
     private void validateAccess(CharacterEntity character, String username) {
         UUID publicCampaign = character.getUsersXCampaignEntity().getCampaign().getPublicId();
 
@@ -491,7 +559,7 @@ public class CharacterServiceImpl implements CharacterService {
                 .orElseThrow(() -> new CharacterAccessDeniedException("You dont have access to this character"));
     }
 
-        /// ////////////////para resolver que tipo de items es lo que trae////////////////////////////////////////////
+        /// /////////////////////////////////Si es Magic o Equipment///////////////////////////////////////////////
         private String resolveItemName(String itemIndex, ItemType itemType) {
             if (itemType == ItemType.EQUIPMENT) {
                 return dnDApiService.getEquipmentByIndex(itemIndex).getName();
