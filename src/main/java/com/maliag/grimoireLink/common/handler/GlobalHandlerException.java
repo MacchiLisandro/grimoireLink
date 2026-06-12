@@ -7,6 +7,7 @@ package com.maliag.grimoireLink.common.handler;
     import jakarta.validation.ConstraintViolationException;
     import org.springframework.http.HttpStatus;
     import org.springframework.http.ResponseEntity;
+    import org.springframework.http.converter.HttpMessageNotReadableException;
     import org.springframework.web.bind.MethodArgumentNotValidException;
     import org.springframework.web.bind.annotation.ControllerAdvice;
     import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,6 +19,13 @@ package com.maliag.grimoireLink.common.handler;
     @ControllerAdvice
 
     public class GlobalHandlerException {
+        @ExceptionHandler(HttpMessageNotReadableException.class)
+        public ResponseEntity<ApiErrorResponse> handleUnreadable(HttpMessageNotReadableException ex, HttpServletRequest request) {
+            String message = "Invalid json body";
+            return ResponseEntity.badRequest()
+                    .body(new ApiErrorResponse(400, message, request.getRequestURI(), LocalDateTime.now()));
+        }
+
         @ExceptionHandler(MethodArgumentNotValidException.class)
         public ResponseEntity<ApiErrorResponse> handleValidation(MethodArgumentNotValidException ex, HttpServletRequest request) {
             String message = ex.getBindingResult().getFieldErrors().stream()
