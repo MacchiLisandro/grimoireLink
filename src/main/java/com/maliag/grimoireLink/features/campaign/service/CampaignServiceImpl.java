@@ -1,11 +1,14 @@
-package com.maliag.grimoireLink.features.campaign;
+package com.maliag.grimoireLink.features.campaign.service;
 
+import com.maliag.grimoireLink.features.campaign.model.CampaignEntity;
+import com.maliag.grimoireLink.features.campaign.mapper.CampaignMapper;
+import com.maliag.grimoireLink.features.campaign.repository.CampaignRepository;
 import com.maliag.grimoireLink.features.campaign.dto.CampaignRequest;
 import com.maliag.grimoireLink.features.campaign.dto.CampaignResponse;
 import com.maliag.grimoireLink.features.campaign.dto.UpdateCampaignRequest;
 
+import com.maliag.grimoireLink.features.campaign.exceptions.AlreadyMemberException;
 import com.maliag.grimoireLink.features.campaign.exceptions.CampaignNotFoundException;
-import com.maliag.grimoireLink.features.encounter.dto.EncounterResponse;
 import com.maliag.grimoireLink.features.users.models.UserEntity;
 import com.maliag.grimoireLink.features.users.repositories.UserRepository;
 import com.maliag.grimoireLink.features.users.services.UserService;
@@ -14,9 +17,7 @@ import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignEntity;
 import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignMapper;
 import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignRepository;
 import com.maliag.grimoireLink.features.usersXCampaign.dto.CampaignMemberResponse;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class CampaignServiceImpl implements CampaignService{
+public class CampaignServiceImpl implements CampaignService {
 
     private final CampaignRepository repository;
     private final CampaignMapper mapper;
@@ -50,8 +51,9 @@ public class CampaignServiceImpl implements CampaignService{
 
     @Override
     @Transactional(readOnly = true)
-    public List<CampaignResponse> getAllCampaignsByUserId(UUID userId){
-        return uxcRepository.findCampaignsByUserPublicId(userId).stream()
+    public List<CampaignResponse> getAllCampaignsByUser(){
+        UserEntity user = userService.getLoggedUserEntity();
+        return uxcRepository.findCampaignsByUserPublicId(user.getPublicId()).stream()
                 .map(mapper::toResponse)
                 .collect(Collectors.toList());
     }
@@ -118,11 +120,11 @@ public class CampaignServiceImpl implements CampaignService{
 
         UserEntity user = userService.getLoggedUserEntity();
         CampaignEntity campaign = repository.findByInviteCode(inviteCode)
-                .orElseThrow(() -> new EntityNotFoundException("Código de invitación inválido"));
+                .orElseThrow(() -> new CampaignNotFoundException("Código de invitación inválido"));
 
         boolean alreadyMember = uxcRepository.existsByUserAndCampaign(user, campaign);
         if (alreadyMember) {
-            throw new IllegalStateException("Ya sos miembro de esta campaña");
+            throw new AlreadyMemberException("Ya sos miembro de esta campaña");
         }
 
         UsersXCampaignEntity membership = UsersXCampaignEntity.builder()

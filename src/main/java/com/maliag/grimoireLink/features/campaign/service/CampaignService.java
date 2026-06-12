@@ -1,9 +1,9 @@
-package com.maliag.grimoireLink.features.campaign;
+package com.maliag.grimoireLink.features.campaign.service;
 
+import com.maliag.grimoireLink.features.campaign.model.CampaignEntity;
 import com.maliag.grimoireLink.features.campaign.dto.CampaignRequest;
 import com.maliag.grimoireLink.features.campaign.dto.CampaignResponse;
 import com.maliag.grimoireLink.features.campaign.dto.UpdateCampaignRequest;
-import com.maliag.grimoireLink.features.encounter.dto.EncounterResponse;
 import com.maliag.grimoireLink.features.usersXCampaign.dto.CampaignMemberResponse;
 
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.UUID;
 public interface CampaignService {
     CampaignResponse getByPublicId(UUID publicId);
     CampaignEntity findByPublicId(UUID publicId);
-    List<CampaignResponse> getAllCampaignsByUserId(UUID userId);
+    List<CampaignResponse> getAllCampaignsByUser();
     List<CampaignMemberResponse> getAllCampaignMembers(UUID publicId);
     CampaignResponse createCampaign(CampaignRequest request);
     CampaignResponse updateCampaign(UUID publicId, UpdateCampaignRequest request);

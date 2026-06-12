@@ -1,4 +1,4 @@
-package com.maliag.grimoireLink.features.campaign;
+package com.maliag.grimoireLink.features.campaign.enums;
 
 public enum CampaignStatus {
     ACTIVE,

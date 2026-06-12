@@ -1,5 +1,6 @@
-package com.maliag.grimoireLink.features.campaign;
+package com.maliag.grimoireLink.features.campaign.mapper;
 
+import com.maliag.grimoireLink.features.campaign.model.CampaignEntity;
 import com.maliag.grimoireLink.features.campaign.dto.CampaignRequest;
 import com.maliag.grimoireLink.features.campaign.dto.CampaignResponse;
 import org.mapstruct.Mapper;
