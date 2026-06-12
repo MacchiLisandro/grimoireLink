@@ -1,6 +1,6 @@
 package com.maliag.grimoireLink.features.spellsXCharacter;
 
-import com.maliag.grimoireLink.features.characters.CharacterEntity;
+import com.maliag.grimoireLink.features.characters.model.CharacterEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

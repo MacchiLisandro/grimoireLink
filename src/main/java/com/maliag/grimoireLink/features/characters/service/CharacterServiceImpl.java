@@ -1,17 +1,21 @@
-package com.maliag.grimoireLink.features.characters;
+package com.maliag.grimoireLink.features.characters.service;
 
-import com.maliag.grimoireLink.features.background.BackgroundEntity;
-import com.maliag.grimoireLink.features.background.BackgroundRepository;
+import com.maliag.grimoireLink.features.background.model.BackgroundEntity;
+import com.maliag.grimoireLink.features.background.repository.BackgroundRepository;
 import com.maliag.grimoireLink.features.background.exceptions.BackgroundNotFoundException;
 import com.maliag.grimoireLink.features.backgroundSkills.BackGroundSkillsEntity;
 import com.maliag.grimoireLink.features.backgroundSkills.BackgroundSkillsRepository;
 import com.maliag.grimoireLink.features.campaign.exceptions.CharacterAlreadyAliveException;
 import com.maliag.grimoireLink.features.campaign.exceptions.MembershipNotFoundException;
+import com.maliag.grimoireLink.features.characters.enums.CharacterStatus;
 import com.maliag.grimoireLink.features.characters.dto.CharacterCreateRequest;
 import com.maliag.grimoireLink.features.characters.dto.CharacterResponse;
 import com.maliag.grimoireLink.features.characters.dto.CharacterUpdateRequest;
 import com.maliag.grimoireLink.features.characters.dto.LevelUpRequest;
 import com.maliag.grimoireLink.features.characters.exceptions.*;
+import com.maliag.grimoireLink.features.characters.mapper.CharacterMapper;
+import com.maliag.grimoireLink.features.characters.model.CharacterEntity;
+import com.maliag.grimoireLink.features.characters.repository.CharacterRepository;
 import com.maliag.grimoireLink.features.dndapi.DnDApiService;
 import com.maliag.grimoireLink.features.dndapi.dto.ClassDetail;
 import com.maliag.grimoireLink.features.dndapi.dto.DndReference;
@@ -80,7 +84,7 @@ public class CharacterServiceImpl implements CharacterService {
                 .findByUser_Credentials_UsernameAndCampaign_PublicId(username,publicCampaingId)
                 .orElseThrow(()-> new CharacterNotFoundException("Player not found in campaign"));
 
-        boolean isAlive=characterRepository.existsByUsersXCampaignEntityAndStatus(member,CharacterStatus.ALIVE);
+        boolean isAlive=characterRepository.existsByUsersXCampaignEntityAndStatus(member, CharacterStatus.ALIVE);
 
         if (isAlive){
             throw  new CharacterAlreadyAliveException("cant have two characters alive in the same campaign");

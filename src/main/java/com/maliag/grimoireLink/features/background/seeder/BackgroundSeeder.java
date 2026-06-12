@@ -1,20 +1,17 @@
 package com.maliag.grimoireLink.features.background.seeder;
 
-import com.maliag.grimoireLink.features.background.BackgroundEntity;
-import com.maliag.grimoireLink.features.background.BackgroundRepository;
+import com.maliag.grimoireLink.features.background.model.BackgroundEntity;
+import com.maliag.grimoireLink.features.background.repository.BackgroundRepository;
 import com.maliag.grimoireLink.features.background.dto.BackGroundSeedDto;
 import com.maliag.grimoireLink.features.backgroundSkills.BackGroundSkillsEntity;
 import com.maliag.grimoireLink.features.backgroundSkills.BackgroundSkillsRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.apache.bcel.util.ClassPath;
-import org.hibernate.dialect.function.ListaggStringAggEmulation;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestBody;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 
