@@ -1,11 +1,10 @@
-[README.md](https://github.com/user-attachments/files/28902209/README.md)
 # 🐉 GrimoireLink
 
 GrimoireLink es una **API REST para la gestión de campañas de Dungeons & Dragons 5e (SRD 2014)**. Permite a un grupo de juego administrar de forma centralizada sus campañas, personajes, hechizos, inventario, encuentros y monstruos, apoyándose en los datos oficiales del SRD a través de la D&D 5e API.
 
 Desarrollada como **Trabajo Práctico Final de Programación III** — UTN Mar del Plata.
 
-## 📌 Descripción
+## 🏰 Descripción
 
 Llevar el registro de una campaña de D&D de forma manual (fichas en papel, planillas sueltas) provoca desincronización entre el master y los jugadores, dificulta el seguimiento de la progresión de los personajes a lo largo de varias sesiones, y obliga a reescribir constantemente datos que ya existen en el SRD oficial.
 
@@ -18,24 +17,25 @@ Los usuarios tienen un **rol contextual según la campaña**:
 
 El rol no se guarda en el JWT, sino en la tabla intermedia `UsersXCampaign`, y la autorización se resuelve en la capa de servicio. Un mismo usuario puede ser DM en una campaña y PLAYER en otra.
 
-## ⚙️ Tecnologías utilizadas
+## 🕯️ Tecnologías utilizadas
 
-- Java 17+
-- Spring Boot 3.2+
+- Java 21
+- Spring Boot 4.0.6
 - Spring Data JPA / Hibernate
 - Spring Security (JWT, *stateless*)
 - MySQL
 - SpringDoc OpenAPI (Swagger UI)
-- Lombok / MapStruct
+- Lombok
+- MapStruct
 - RestClient (consumo de la D&D 5e SRD API)
 - Maven
 
-## 🚀 Instalación
+## 🧙 Instalación
 
 1. Clonar el repositorio:
 
 ```bash
-git clone <URL-DEL-REPOSITORIO>
+git clone <https://github.com/MacchiLisandro/grimoireLink.git>
 cd GrimoireLink
 ```
 
@@ -45,16 +45,26 @@ cd GrimoireLink
 CREATE DATABASE grimoirelink;
 ```
 
-3. Configurar las credenciales en `src/main/resources/application.properties`:
+3. Configurar las credenciales en `src/main/resources/application.yaml`:
 
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/grimoirelink
-spring.datasource.username=TU_USUARIO
-spring.datasource.password=TU_CONTRASEÑA
-spring.jpa.hibernate.ddl-auto=update
-
-jwt.secret=TU_CLAVE_SECRETA
-jwt.expiration=86400000
+```
+spring:
+  application:
+    name: grimoireLink
+  datasource:
+    url: TU_URL
+    username: TU_USUARIO
+    password: TU_CONTRASEÑA
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        type:
+          preferred_uuid_jdbc_type: VARCHAR
 ```
 
 4. Ejecutar la aplicación:
@@ -65,16 +75,15 @@ jwt.expiration=86400000
 
 > Al iniciar por primera vez, el *seeder* carga automáticamente los trasfondos y sus habilidades asociadas. Es idempotente: no duplica datos en reinicios posteriores.
 
-## 📚 Documentación de la API
+## 🗡️ Documentación de la API
 
 El proyecto incluye **Swagger UI** para la documentación interactiva de todos los endpoints, sus parámetros, cuerpos de request y respuestas. Una vez levantada la aplicación:
 
 - Swagger UI: `http://localhost:8080/swagger-ui.html`
-- Especificación OpenAPI (JSON): `http://localhost:8080/v3/api-docs`
 
 En la UI, usá el botón **Authorize** 🔒 (arriba a la derecha) para pegar tu JWT y probar los endpoints protegidos directamente desde el navegador.
 
-## 🔐 Autenticación
+## 🛡️ Autenticación
 
 El sistema utiliza **JWT** en modo *stateless*. El flujo es:
 
@@ -94,7 +103,7 @@ Cuando el access token expira, se renueva con `POST /api/auth/refresh` enviando 
 | Requiere JWT | Todos los demás endpoints |
 | DM / PLAYER | Roles **contextuales por campaña**, validados en la capa de servicio |
 
-## 🛣️ Funcionalidades principales
+## 🎲 Funcionalidades principales
 
 ### Jugador (PLAYER)
 
@@ -112,7 +121,7 @@ Cuando el access token expira, se renueva con `POST /api/auth/refresh` enviando 
 - Agregar personajes y **monstruos** (traídos del SRD) a un encuentro.
 - Llevar el seguimiento de HP de personajes y monstruos durante el combate.
 
-## 📐 Reglas de negocio
+## 📜 Reglas de negocio
 
 - **Autenticación obligatoria:** todos los endpoints requieren JWT, salvo registro y login.
 - **Creación de campaña:** quien la crea queda como **DM**.
@@ -124,23 +133,16 @@ Cuando el access token expira, se renueva con `POST /api/auth/refresh` enviando 
 - **Monstruos sin recurso propio:** un monstruo no se crea con un POST independiente. Se **materializa desde el SRD** al agregarlo a un encuentro, generando una instancia con su propio `publicId` y HP para el seguimiento del combate.
 - **Denormalización controlada:** los nombres e índices de raza, clase y subclase se cachean localmente en el personaje al crearlo, evitando llamadas repetidas a la API externa.
 
-## 🛠️ Funcionalidades futuras
+## 🔮 Funcionalidades futuras
 
-- **Módulo de Journals** (bitácoras de campaña).
+- **Mapa de batalla** (visualización de enfrentamientos en tablero).
+- **Sistema de tirada de dados**
 - **Sistema de combate con gestión de turnos e iniciativa** y registro de eventos (`Combat_Log`).
 - **Notificaciones en tiempo real** (WebSockets / patrón Observer) para sincronizar el estado de la partida entre DM y jugadores.
 - **Frontend en Angular** para consumir la API.
 - Log de auditoría (AOP) sobre operaciones sensibles.
 
-## 🤝 Contribuciones
-
-Proyecto académico en desarrollo. Por el momento no se aceptan contribuciones externas.
-
-## 📄 Licencia
-
-Proyecto de uso educativo y privado. Sin licencia pública por el momento.
-
-## 👥 Autores
+## 🧝 Autores
 
 - Mateo Benegas
 - Agostina Fenoy
