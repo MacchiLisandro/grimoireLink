@@ -4,6 +4,8 @@ import com.maliag.grimoireLink.features.campaign.enums.CampaignStatus;
 import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +40,7 @@ public class CampaignEntity {
     @Enumerated(EnumType.STRING)
     private CampaignStatus status;
 
-    @OneToMany(mappedBy = "campaign", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "campaign", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<UsersXCampaignEntity> users = new ArrayList<>();
 
     @PrePersist
