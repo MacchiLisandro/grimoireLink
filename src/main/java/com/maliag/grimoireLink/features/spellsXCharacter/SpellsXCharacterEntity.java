@@ -3,6 +3,8 @@ package com.maliag.grimoireLink.features.spellsXCharacter;
 import com.maliag.grimoireLink.features.characters.model.CharacterEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.UUID;
 
@@ -21,10 +23,12 @@ public class SpellsXCharacterEntity {
 
     @EqualsAndHashCode.Include
     @Column(name = "public_id", unique = true, nullable = false, updatable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private UUID publicId;
 
     @ManyToOne
     @JoinColumn(name = "character_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private CharacterEntity character;
 
     @Column(name = "spell_index", nullable = false)
