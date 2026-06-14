@@ -15,5 +15,5 @@ public class CharacterSkillResponse {
     private UUID publicId;
     private String skillIndex;
     private String name;
-    private Integer proficiency; // 0 = none, 1 = proficient, 2 = expertise
+    private Integer proficiency;
 }

@@ -481,7 +481,7 @@ public class CharacterServiceImpl implements CharacterService {
                 .getName();
 
         CharacterEntity character=characterRepository.findBypublicId(characterPublicId)
-                .orElseThrow(()->new EntityNotFoundException("character not found"));
+                .orElseThrow(()->new CharacterNotFoundException("character not found"));
 
         validateAccess(character,username);
 
