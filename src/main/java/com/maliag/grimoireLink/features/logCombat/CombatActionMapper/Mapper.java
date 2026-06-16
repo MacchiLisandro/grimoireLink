@@ -13,13 +13,13 @@ import java.util.UUID;
 
 public class Mapper {
 
-    public CombatActionEntity toEntity (EncounterEntity encounter,
-                                        DamageRequest request,
-                                        CombatantType targetType,
-                                        UUID targetId){
+    public CombatActionEntity toEntity(EncounterEntity encounter,
+                                       DamageRequest request,
+                                       CombatantType targetType,
+                                       UUID targetId) {
         return CombatActionEntity.builder()
                 .encounter(encounter)
-                .actionType(request.getActionType())
+                .actorType(request.getActorType())
                 .actorId(request.getActorId())
                 .targetType(targetType)
                 .targetId(targetId)

@@ -4,6 +4,8 @@ import com.maliag.grimoireLink.features.encounter.services.EncounterService;
 import com.maliag.grimoireLink.features.encounter.enums.EncounterStatus;
 import com.maliag.grimoireLink.features.encounter.dto.EncounterRequest;
 import com.maliag.grimoireLink.features.encounter.dto.EncounterResponse;
+import com.maliag.grimoireLink.features.logCombat.dto.CombatActionResponse;
+import com.maliag.grimoireLink.features.logCombat.dto.DamageRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -80,4 +82,26 @@ public class EncounterController {
                                                            @PathVariable UUID monsterId) {
         return ResponseEntity.ok(encounterService.removeMonster(id, monsterId));
     }
+
+    /// Combate //////////////////////
+    @PatchMapping("/{id}/characters/{characterId}/damage")
+    public ResponseEntity<EncounterResponse> applyDamageToCharacter(@PathVariable UUID id,
+                                                                    @PathVariable UUID characterId,
+                                                                    @RequestBody @Valid DamageRequest request) {
+        return ResponseEntity.ok(encounterService.applyDamageToCharacter(id, characterId, request));
+    }
+
+    @PatchMapping("/{id}/monsters/{monsterId}/damage")
+    public ResponseEntity<EncounterResponse> applyDamageToMonster(@PathVariable UUID id,
+                                                                  @PathVariable UUID monsterId,
+                                                                  @RequestBody @Valid DamageRequest request) {
+        return ResponseEntity.ok(encounterService.applyDamageToMonster(id, monsterId, request));
+    }
+
+    @GetMapping("/{id}/combat-log")
+    public ResponseEntity<List<CombatActionResponse>> getCombatLog(@PathVariable UUID id) {
+        return ResponseEntity.ok(encounterService.getCombatLog(id));
+    }
+
+
 }
