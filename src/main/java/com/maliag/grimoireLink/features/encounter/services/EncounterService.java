@@ -3,6 +3,8 @@ package com.maliag.grimoireLink.features.encounter.services;
 import com.maliag.grimoireLink.features.encounter.dto.EncounterRequest;
 import com.maliag.grimoireLink.features.encounter.dto.EncounterResponse;
 import com.maliag.grimoireLink.features.encounter.enums.EncounterStatus;
+import com.maliag.grimoireLink.features.logCombat.dto.CombatActionResponse;
+import com.maliag.grimoireLink.features.logCombat.dto.DamageRequest;
 
 import java.util.List;
 import java.util.UUID;
@@ -18,4 +20,10 @@ public interface EncounterService {
     EncounterResponse updateMonsterHp(UUID encounterId, UUID monsterId, int newHp);
     EncounterResponse removeCharacter(UUID encounterId, UUID characterId);
     EncounterResponse removeMonster(UUID encounterId, UUID monsterId);
+
+
+    /// Combate Endpoints
+    EncounterResponse applyDamageToCharacter(UUID encounterId, UUID characterId, DamageRequest request);
+    EncounterResponse applyDamageToMonster(UUID encounterId, UUID monsterId, DamageRequest request);
+    List<CombatActionResponse> getCombatLog(UUID encounterId);
 }

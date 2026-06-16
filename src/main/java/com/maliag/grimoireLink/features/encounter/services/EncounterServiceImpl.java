@@ -2,7 +2,9 @@ package com.maliag.grimoireLink.features.encounter.services;
 
 import com.maliag.grimoireLink.features.campaign.model.CampaignEntity;
 import com.maliag.grimoireLink.features.campaign.service.CampaignService;
+import com.maliag.grimoireLink.features.characters.model.CharacterEntity;
 import com.maliag.grimoireLink.features.characters.service.CharacterService;
+import com.maliag.grimoireLink.features.encounter.exceptions.CharacterNotInEncounterException;
 import com.maliag.grimoireLink.features.encounter.exceptions.MonsterNotInEncounterException;
 import com.maliag.grimoireLink.features.encounter.models.EncounterEntity;
 import com.maliag.grimoireLink.features.encounter.mappers.EncounterMapper;
@@ -12,6 +14,14 @@ import com.maliag.grimoireLink.features.encounter.dto.EncounterResponse;
 import com.maliag.grimoireLink.features.encounter.enums.EncounterStatus;
 import com.maliag.grimoireLink.features.encounter.exceptions.CharacterAlreadyInEncounterException;
 import com.maliag.grimoireLink.features.encounter.exceptions.EncounterNotFoundException;
+import com.maliag.grimoireLink.features.logCombat.CombatActionEntity;
+import com.maliag.grimoireLink.features.logCombat.CombatActionMapper.Mapper;
+import com.maliag.grimoireLink.features.logCombat.dto.CombatActionResponse;
+import com.maliag.grimoireLink.features.logCombat.dto.DamageRequest;
+import com.maliag.grimoireLink.features.logCombat.enums.ActionType;
+import com.maliag.grimoireLink.features.logCombat.enums.CombatantType;
+import com.maliag.grimoireLink.features.logCombat.repository.CombatActionRepository;
+import com.maliag.grimoireLink.features.monsters.models.MonsterEntity;
 import com.maliag.grimoireLink.features.monsters.services.MonsterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,6 +39,11 @@ public class EncounterServiceImpl implements EncounterService {
     private final CharacterService characterService;
     private final MonsterService monsterService;
     private final CampaignService campaignService;
+
+
+    ///////////////////////////////////////////////////////
+    private final CombatActionRepository combatActionRepository;
+    private final Mapper combatActionMapper;
 
     @Transactional
     public EncounterResponse saveEncounter(EncounterRequest request) {
@@ -120,5 +135,66 @@ public class EncounterServiceImpl implements EncounterService {
                 .orElseThrow(() -> new EncounterNotFoundException("Encounter not found"));
         encounter.getMonsters().removeIf(m -> m.getPublicId().equals(monsterId));
         return encounterMapper.toResponse(encounter);
+    }
+
+
+    /// Combate ////////////////////////////////////////
+    @Override
+    @Transactional
+    public EncounterResponse applyDamageToCharacter(UUID encounterId, UUID characterId, DamageRequest request) {
+
+        EncounterEntity encounter=encounterRepository.findByPublicId(encounterId)
+                .orElseThrow(()-> new EncounterNotFoundException("Encounter Not Found"));
+
+        CharacterEntity target = encounter.getCharacters().stream()
+                .filter(c->c.getPublicId().equals(characterId))
+                .findFirst()
+                .orElseThrow(()-> new CharacterNotInEncounterException("Character not in  encounter"));
+
+        int newhp=calculateNewHp(target.getCurrentHp(),request.getAmount(),request.getActionType());
+        characterService.updateHp(characterId,newhp);
+
+        CombatActionEntity action=combatActionMapper.toEntity(
+                encounter,request, CombatantType.CHARACTER,characterId);
+        combatActionRepository.save(action);
+
+        return encounterMapper.toResponse(encounter);
+    }
+
+    @Override
+    @Transactional
+    public EncounterResponse applyDamageToMonster(UUID encounterId, UUID monsterId, DamageRequest request) {
+        EncounterEntity encounter=encounterRepository.findByPublicId(encounterId)
+                .orElseThrow(()-> new EncounterNotFoundException("encounter not found"));
+
+        MonsterEntity target=encounter.getMonsters().stream()
+                .filter(m->m.getPublicId().equals(monsterId))
+                .findFirst()
+                .orElseThrow(()->new MonsterNotInEncounterException("Monster not in encounter"));
+
+        int newHp=calculateNewHp(target.getCurrentHp(),request.getAmount(),request.getActionType());
+        monsterService.updateHp(monsterId,newHp);
+
+        CombatActionEntity action=combatActionMapper.toEntity(encounter,request,CombatantType.MONSTER,monsterId);
+        combatActionRepository.save(action);
+
+        return encounterMapper.toResponse(encounter);
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CombatActionResponse> getCombatLog(UUID encounterId) {
+        return combatActionRepository.findByEncounterPublicIdOrderByCreatedAtAsc(encounterId).stream()
+                .map(combatActionMapper::toResponse)
+                .toList();
+    }
+
+///Helper para calcular el daño y modificar vida.
+    private int calculateNewHp(int currentHp, int amount, ActionType actionType) {
+        if (actionType == ActionType.HEAL) {
+            return currentHp + amount;
+        }
+        return currentHp - amount;
     }
 }
