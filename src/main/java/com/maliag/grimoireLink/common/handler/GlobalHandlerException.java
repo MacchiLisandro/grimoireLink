@@ -1,6 +1,7 @@
 package com.maliag.grimoireLink.common.handler;
 
     import com.maliag.grimoireLink.common.exceptions.ConflictException;
+    import com.maliag.grimoireLink.common.exceptions.ForbiddenException;
     import com.maliag.grimoireLink.common.exceptions.ResourceNotFoundException;
     import com.maliag.grimoireLink.common.exceptions.UnauthorizedException;
     import jakarta.servlet.http.HttpServletRequest;
@@ -60,6 +61,12 @@ package com.maliag.grimoireLink.common.handler;
         public ResponseEntity<ApiErrorResponse> handleUnauthorized(UnauthorizedException ex, HttpServletRequest request) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ApiErrorResponse(401, ex.getMessage(), request.getRequestURI(), LocalDateTime.now()));
+        }
+
+        @ExceptionHandler(ForbiddenException.class)
+        public ResponseEntity<ApiErrorResponse> handleForbidden(ForbiddenException ex, HttpServletRequest request) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(new ApiErrorResponse(403, ex.getMessage(), request.getRequestURI(), LocalDateTime.now()));
         }
 
         ///exception de spring

@@ -32,6 +32,7 @@ public class EncounterServiceImpl implements EncounterService {
 
     @Transactional
     public EncounterResponse saveEncounter(EncounterRequest request) {
+        campaignService.assertIsDungeonMaster(request.getCampaignId());
         CampaignEntity campaign = campaignService.findByPublicId(request.getCampaignId());
         EncounterEntity encounter = encounterMapper.toEntity(request);
         encounter.setEncounterStatus(EncounterStatus.PLANNED);
