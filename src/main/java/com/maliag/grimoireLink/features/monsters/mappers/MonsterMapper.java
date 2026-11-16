@@ -1,6 +1,8 @@
 package com.maliag.grimoireLink.features.monsters.mappers;
 
+import com.maliag.grimoireLink.features.dndapi.dto.DndReference;
 import com.maliag.grimoireLink.features.dndapi.dto.MonsterApiResponse;
+import com.maliag.grimoireLink.features.monsters.dtos.MonsterReferenceResponse;
 import com.maliag.grimoireLink.features.monsters.dtos.MonsterResponse;
 import com.maliag.grimoireLink.features.monsters.models.MonsterEntity;
 import org.mapstruct.Mapper;
@@ -17,4 +19,6 @@ public interface MonsterMapper {
     MonsterEntity toEntity(MonsterApiResponse response);
 
     MonsterResponse toResponse(MonsterEntity monster);
+
+    MonsterReferenceResponse toReferenceResponse(DndReference reference);
 }

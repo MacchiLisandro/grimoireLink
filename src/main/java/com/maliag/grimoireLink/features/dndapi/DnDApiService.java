@@ -234,7 +234,17 @@ public class DnDApiService {
                 .body(MonsterApiResponse.class);
     }
 
+    public List<DndReference> getMonsters() {
+        DndReferenceList dto = restClient.get()
+                .uri("/api/2014/monsters")
+                .retrieve()
+                .body(DndReferenceList.class);
 
+        if (dto != null && dto.getResults() != null) {
+            return dto.getResults();
+        }
+        return List.of();
+    }
 
 
 }

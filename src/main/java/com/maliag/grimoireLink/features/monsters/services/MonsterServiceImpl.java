@@ -1,6 +1,8 @@
 package com.maliag.grimoireLink.features.monsters.services;
 
 import com.maliag.grimoireLink.features.dndapi.DnDApiService;
+import com.maliag.grimoireLink.features.dndapi.dto.DndReference;
+import com.maliag.grimoireLink.features.monsters.dtos.MonsterReferenceResponse;
 import com.maliag.grimoireLink.features.monsters.mappers.MonsterMapper;
 import com.maliag.grimoireLink.features.monsters.repositories.MonsterRepository;
 import com.maliag.grimoireLink.features.monsters.dtos.MonsterResponse;
@@ -10,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -29,6 +32,13 @@ public class MonsterServiceImpl implements MonsterService {
     @Transactional
     public MonsterResponse getMonsterFromApi (String index){
         return monsterMapper.toResponse(monsterMapper.toEntity(dndApiService.getMonsterByIndex(index)));
+    }
+
+    @Override
+    public List<MonsterReferenceResponse> getCatalog() {
+        return dndApiService.getMonsters().stream()
+                .map(monsterMapper::toReferenceResponse)
+                .toList();
     }
 
     public MonsterResponse getByPublicId(UUID publicId) {

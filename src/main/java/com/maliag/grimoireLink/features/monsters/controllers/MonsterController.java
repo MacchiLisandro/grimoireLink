@@ -1,5 +1,6 @@
 package com.maliag.grimoireLink.features.monsters.controllers;
 
+import com.maliag.grimoireLink.features.monsters.dtos.MonsterReferenceResponse;
 import com.maliag.grimoireLink.features.monsters.services.MonsterService;
 import com.maliag.grimoireLink.features.monsters.dtos.MonsterResponse;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -24,5 +26,10 @@ public class MonsterController {
     @GetMapping("/{id}")
     public ResponseEntity<MonsterResponse> getMonsterById (@PathVariable UUID id){
         return ResponseEntity.ok().body(monsterService.getByPublicId(id));
+    }
+
+    @GetMapping("/catalog")
+    public ResponseEntity<List<MonsterReferenceResponse>> getCatalog() {
+        return ResponseEntity.ok().body(monsterService.getCatalog());
     }
 }
