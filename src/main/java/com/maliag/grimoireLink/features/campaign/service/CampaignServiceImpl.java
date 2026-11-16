@@ -1,24 +1,22 @@
 package com.maliag.grimoireLink.features.campaign.service;
 
-import com.maliag.grimoireLink.common.exceptions.UnauthorizedException;
+import com.maliag.grimoireLink.features.campaign.exceptions.DmAccessDeniedException;
+import com.maliag.grimoireLink.features.campaign.exceptions.DmNotFoundException;
 import com.maliag.grimoireLink.features.campaign.model.CampaignEntity;
 import com.maliag.grimoireLink.features.campaign.mapper.CampaignMapper;
 import com.maliag.grimoireLink.features.campaign.repository.CampaignRepository;
 import com.maliag.grimoireLink.features.campaign.dto.CampaignRequest;
 import com.maliag.grimoireLink.features.campaign.dto.CampaignResponse;
 import com.maliag.grimoireLink.features.campaign.dto.UpdateCampaignRequest;
-
 import com.maliag.grimoireLink.features.campaign.exceptions.AlreadyMemberException;
 import com.maliag.grimoireLink.features.campaign.exceptions.CampaignNotFoundException;
 import com.maliag.grimoireLink.features.users.models.UserEntity;
-import com.maliag.grimoireLink.features.users.repositories.UserRepository;
 import com.maliag.grimoireLink.features.users.services.UserService;
 import com.maliag.grimoireLink.features.usersXCampaign.Role;
 import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignEntity;
 import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignMapper;
 import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignRepository;
 import com.maliag.grimoireLink.features.usersXCampaign.dto.CampaignMemberResponse;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -95,11 +93,8 @@ public class CampaignServiceImpl implements CampaignService {
     @Transactional
     public CampaignResponse updateCampaign(UUID publicId, UpdateCampaignRequest request){
         CampaignEntity campaign = findByPublicId(publicId);
-        UserEntity user = userService.getLoggedUserEntity();
 
-        if(!getDm(publicId).getUser().getPublicId().equals(user.getPublicId())){
-            throw new UnauthorizedException("Only the DM can update the campaign");
-        }
+        assertIsDungeonMaster(publicId);
 
         if(request.getName()!=null){
             campaign.setName(request.getName());
@@ -117,11 +112,8 @@ public class CampaignServiceImpl implements CampaignService {
     @Transactional
     public void deleteCampaign(UUID publicId){
         CampaignEntity campaign = findByPublicId(publicId);
-        UserEntity user = userService.getLoggedUserEntity();
 
-        if(!getDm(publicId).getUser().getPublicId().equals(user.getPublicId())){
-            throw new UnauthorizedException("Only the DM can delete the campaign");
-        }
+        assertIsDungeonMaster(publicId);
 
         ///usar baja logica?
         repository.delete(campaign);
@@ -154,7 +146,17 @@ public class CampaignServiceImpl implements CampaignService {
     public UsersXCampaignEntity getDm(UUID campaignPublicId){
         return uxcRepository
                 .findByCampaign_PublicIdAndRole(campaignPublicId, Role.DUNGEON_MASTER)
-                .orElseThrow(() -> new EntityNotFoundException("DM not found"));
+                .orElseThrow(() -> new DmNotFoundException("DM not found"));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public void assertIsDungeonMaster(UUID campaignPublicId) {
+        UserEntity user = userService.getLoggedUserEntity();
+
+        if (!getDm(campaignPublicId).getUser().getPublicId().equals(user.getPublicId())) {
+            throw new DmAccessDeniedException("Only the DM can do this");
+        }
     }
 
 }
