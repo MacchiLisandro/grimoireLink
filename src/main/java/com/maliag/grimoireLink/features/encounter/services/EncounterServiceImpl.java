@@ -2,7 +2,9 @@ package com.maliag.grimoireLink.features.encounter.services;
 
 import com.maliag.grimoireLink.features.campaign.model.CampaignEntity;
 import com.maliag.grimoireLink.features.campaign.service.CampaignService;
+import com.maliag.grimoireLink.features.characters.model.CharacterEntity;
 import com.maliag.grimoireLink.features.characters.service.CharacterService;
+import com.maliag.grimoireLink.features.encounter.exceptions.CharacterNotInCampaignException;
 import com.maliag.grimoireLink.features.encounter.exceptions.MonsterNotInEncounterException;
 import com.maliag.grimoireLink.features.encounter.models.EncounterEntity;
 import com.maliag.grimoireLink.features.encounter.mappers.EncounterMapper;
@@ -75,7 +77,14 @@ public class EncounterServiceImpl implements EncounterService {
         if (alreadyInEncounter) {
             throw new CharacterAlreadyInEncounterException("Character already in encounter");
         }
-        encounter.getCharacters().add(characterService.findCharacterByPublicId(characterId));
+        CharacterEntity character = characterService.findCharacterByPublicId(characterId);
+
+        if (!character.getUsersXCampaignEntity().getCampaign().getPublicId()
+                .equals(encounter.getCampaign().getPublicId())) {
+            throw new CharacterNotInCampaignException("Character does not belong to this campaign");
+        }
+
+        encounter.getCharacters().add(character);
         return encounterMapper.toResponse(encounter);
     }
 
