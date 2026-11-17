@@ -1,0 +1,93 @@
+[
+  {
+    "index": "acolyte",
+    "name": "Acolyte",
+    "description": "You have spent your life in the service of a temple to a specific god or pantheon of gods.",
+    "languages": "Two of your choice",
+    "skills": ["insight", "religion"]
+  },
+  {
+    "index": "criminal",
+    "name": "Criminal",
+    "description": "You are an experienced criminal with a history of breaking the law.",
+    "languages": "None",
+    "skills": ["deception", "stealth"]
+  },
+  {
+    "index": "folk-hero",
+    "name": "Folk Hero",
+    "description": "You come from a humble social rank, but you are destined for so much more.",
+    "languages": "None",
+    "skills": ["animal-handling", "survival"]
+  },
+  {
+    "index": "noble",
+    "name": "Noble",
+    "description": "You understand wealth, power, and privilege.",
+    "languages": "One of your choice",
+    "skills": ["history", "persuasion"]
+  },
+  {
+    "index": "sage",
+    "name": "Sage",
+    "description": "You spent years learning the lore of the multiverse.",
+    "languages": "Two of your choice",
+    "skills": ["arcana", "history"]
+  },
+  {
+    "index": "soldier",
+    "name": "Soldier",
+    "description": "War has been your life for as long as you care to remember.",
+    "languages": "None",
+    "skills": ["athletics", "intimidation"]
+  },
+  {
+    "index": "charlatan",
+    "name": "Charlatan",
+    "description": "You have always had a way with people, able to tease out their desires after a few minutes of conversation.",
+    "languages": "None",
+    "skills": ["deception", "sleight-of-hand"]
+  },
+  {
+    "index": "entertainer",
+    "name": "Entertainer",
+    "description": "You thrive in front of an audience, knowing how to entrance them, entertain them, and even inspire them.",
+    "languages": "None",
+    "skills": ["acrobatics", "performance"]
+  },
+  {
+    "index": "guild-artisan",
+    "name": "Guild Artisan",
+    "description": "You are a member of an artisan's guild, skilled in a particular field and closely associated with other artisans.",
+    "languages": "One of your choice",
+    "skills": ["insight", "persuasion"]
+  },
+  {
+    "index": "hermit",
+    "name": "Hermit",
+    "description": "You lived in seclusion, either in a sheltered community such as a monastery, or entirely alone.",
+    "languages": "One of your choice",
+    "skills": ["medicine", "religion"]
+  },
+  {
+    "index": "outlander",
+    "name": "Outlander",
+    "description": "You grew up in the wilds, far from civilization and the comforts of town and technology.",
+    "languages": "One of your choice",
+    "skills": ["athletics", "survival"]
+  },
+  {
+    "index": "sailor",
+    "name": "Sailor",
+    "description": "You sailed on a seagoing vessel for years.",
+    "languages": "None",
+    "skills": ["athletics", "perception"]
+  },
+  {
+    "index": "urchin",
+    "name": "Urchin",
+    "description": "You grew up on the streets alone, orphaned, and poor.",
+    "languages": "None",
+    "skills": ["sleight-of-hand", "stealth"]
+  }
+]

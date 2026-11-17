@@ -1,6 +1,6 @@
 package com.maliag.grimoireLink.features.featuresXCharacter;
 
-import com.maliag.grimoireLink.features.characters.CharacterEntity;
+import com.maliag.grimoireLink.features.characters.model.CharacterEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,8 +33,11 @@ public class FeatureXCharacterEntity {
     @Column (name = "name", nullable = false)
     private String name;
 
+    @Column(name = "source", nullable = false)
+    private String source;
+
     @PrePersist
-    protected void onCreate() {
+    void onCreate() {
         if (publicId==null){
             this.publicId = UUID.randomUUID();
         }

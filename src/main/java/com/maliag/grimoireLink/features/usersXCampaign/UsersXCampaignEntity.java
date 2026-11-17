@@ -1,0 +1,55 @@
+package com.maliag.grimoireLink.features.usersXCampaign;
+
+import com.maliag.grimoireLink.features.campaign.model.CampaignEntity;
+import com.maliag.grimoireLink.features.characters.model.CharacterEntity;
+import com.maliag.grimoireLink.features.users.models.UserEntity;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@Table(name="users_x_campaign")
+public class UsersXCampaignEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "campaign_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private CampaignEntity campaign;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
+
+    @Column(name = "join_date", nullable = false)
+    private LocalDateTime joinDate;
+
+    @Column(name = "role", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "usersXCampaignEntity", cascade = CascadeType.ALL)
+    private List<CharacterEntity> characters = new ArrayList<>();
+
+    @PrePersist
+    void onCreate(){
+        if(joinDate==null){
+            joinDate = LocalDateTime.now();
+        }
+    }
+
+}

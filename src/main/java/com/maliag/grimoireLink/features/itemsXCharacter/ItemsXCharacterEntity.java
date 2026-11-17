@@ -1,9 +1,8 @@
 package com.maliag.grimoireLink.features.itemsXCharacter;
 
-import com.maliag.grimoireLink.features.characters.CharacterEntity;
+import com.maliag.grimoireLink.features.characters.model.CharacterEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.apache.commons.lang3.builder.HashCodeExclude;
 
 import java.util.UUID;
 
@@ -34,16 +33,26 @@ public class ItemsXCharacterEntity {
     @Column (name = "name", nullable = false)
     private String name;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "item_type", nullable = false)
+    private ItemType itemType;
+
     @Column(name = "equipped", nullable = false)
     private Boolean equipped;
 
+    @Column(name = "quantity",nullable = false)
+    private Integer quantity;
+
     @PrePersist
-    protected void onCreate() {
+    void onCreate() {
         if (publicId == null) {
             this.publicId = UUID.randomUUID();
         }
         if (equipped == null) {
             equipped = false;
+        }
+        if (quantity == null){
+            quantity=1;
         }
     }
 }

@@ -1,5 +1,11 @@
 package com.maliag.grimoireLink.features.dndapi;
+import com.maliag.grimoireLink.common.exceptions.ResourceNotFoundException;
 import com.maliag.grimoireLink.features.dndapi.dto.*;
+import com.maliag.grimoireLink.features.dndapi.exceptions.ClassNotFoundException;
+import com.maliag.grimoireLink.features.dndapi.exceptions.RaceNotFoundException;
+import com.maliag.grimoireLink.features.monsters.exceptions.MonsterNotFoundException;
+import com.maliag.grimoireLink.features.spellsXCharacter.exceptions.SpellNotFoundException;
+import org.springframework.core.type.classreading.ClassFormatException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import java.util.ArrayList;
@@ -53,12 +59,12 @@ public class DnDApiService {
     public ClassDetail getclassdetails(String Classindex)
     {
         ClassDetail dto = restClient.get()
-                .uri("/api/2014/classes" + Classindex)
+                .uri("/api/2014/classes/{index}",Classindex)
                 .retrieve()
                 .onStatus(
                         status -> status.value()==400,
                         (request, response) -> {
-                            throw new IllegalArgumentException("Clase no existente:" + Classindex  ); ///cambiar dps
+                            throw new ClassNotFoundException("Class not found:" + Classindex  ); ///cambiar dps
                         }
                 )
                 .body(ClassDetail.class);
@@ -66,7 +72,7 @@ public class DnDApiService {
         return dto;
     }
 
-    /// Get FeatsXClass
+    /// Get FeaturesXClass
 
     public List<DndReference>getFeaturesForClass(String Classindex, int MaxLvl){
          ClassLevelDetail[] levelDetail=restClient.get()
@@ -91,23 +97,95 @@ public class DnDApiService {
 
 
     }
+    public DndReference getSubclass(String index){
+        return restClient.get()
+                .uri("/api/2014/subclasses/{index}", index)
+                .retrieve()
+                .onStatus(
+                        status -> status.value() == 404,
+                        (request, response) -> {
+                            throw new ClassNotFoundException("Subclass not found: " + index);
+                        }
+                )
+                .body(DndReference.class);
+    }
+
+    public DndReference getRaceByIndex(String index){
+        return restClient.get()
+                .uri("/api/2014/races/{index}", index)
+                .retrieve()
+                .onStatus(
+                        status -> status.value() == 404,
+                        (request, response) -> {
+                            throw new RaceNotFoundException("Race not found: " + index);
+                        }
+                )
+                .body(DndReference.class);
+    }
+
+    public List<DndReference> getRaceFeatures(String index){
+        RaceDetails details = restClient.get()
+                .uri("/api/2014/races/{index}", index)
+                .retrieve()
+                .onStatus(
+                        status -> status.value() == 404,
+                        (request, response) -> {
+                            throw new RaceNotFoundException("Race not found: " + index);
+                        }
+                )
+                .body(RaceDetails.class);
+
+        if (details == null || details.getTraits() == null) return List.of();
+        return details.getTraits();
+    }
+
+    public DndReference getSpellByIndex(String index){
+        return restClient.get()
+                .uri("/api/2014/spells/{index}", index)
+                .retrieve()
+                .onStatus(
+                        status -> status.value() == 404,
+                        (request, response) -> {
+                            throw new SpellNotFoundException("Spell not found: " + index);
+                        }
+                )
+                .body(DndReference.class);
+    }
+
+    public DndReference getEquipmentByIndex(String index){
+        return restClient.get()
+                .uri("/api/2014/equipment/{index}",index)
+                .retrieve()
+                .body(DndReference.class);
+    }
+
+    public DndReference getMagicItemByIndex(String index){
+        return restClient.get()
+                .uri("/api/2014/magic-items/{index}",index)
+                .retrieve()
+                .body(DndReference.class);
+    }
+
+    public SpellcastingSlots getSpellSlots(String classIndex,int level){
+        ClassLevelDetail detail=restClient.get()
+                .uri("/api/2014/classes/{classIndex}/levels/{level}",classIndex,level)
+                .retrieve()
+                .body(ClassLevelDetail.class);
+
+        if (detail == null) return null;
+
+        return detail.getSpellcasting();
+    }
 
 /// Helper para devolver los slots por nivel
     public Integer getMaxSpellsLevel(String Classindex, int characterLevel)
     {
-        ClassLevelDetail detail=restClient.get()
-                .uri("/api/2014/classes/{ClassIndex}/levels",Classindex,characterLevel)
-                .retrieve()
-                .body(ClassLevelDetail.class);
+        SpellcastingSlots slots=getSpellSlots(Classindex,characterLevel);
+        if (slots == null) return 0;
 
-        if(detail == null || detail.getSpellcasting() == null)
-        {
-            return 0;
-        }
 
-        SpellcastingSlots slots = detail.getSpellcasting();
         int[] spellSlots = {
-                0, // índice 0 no se usa
+                0,/// nunca sos lvl 0  xd
                 slots.getSpellSlotsLevel1(),
                 slots.getSpellSlotsLevel2(),
                 slots.getSpellSlotsLevel3(),
@@ -143,9 +221,30 @@ public class DnDApiService {
 
     }
 
+    public MonsterApiResponse getMonsterByIndex(String index) {
+        return restClient.get()
+                .uri("/api/2014/monsters/{index}", index)
+                .retrieve()
+                .onStatus(
+                        status -> status.value() == 403 || status.value() == 404,
+                        (request, response) -> {
+                            throw new MonsterNotFoundException("Monster not found: " + index);
+                        }
+                )
+                .body(MonsterApiResponse.class);
+    }
 
+    public List<DndReference> getMonsters() {
+        DndReferenceList dto = restClient.get()
+                .uri("/api/2014/monsters")
+                .retrieve()
+                .body(DndReferenceList.class);
 
-
+        if (dto != null && dto.getResults() != null) {
+            return dto.getResults();
+        }
+        return List.of();
+    }
 
 
 }
