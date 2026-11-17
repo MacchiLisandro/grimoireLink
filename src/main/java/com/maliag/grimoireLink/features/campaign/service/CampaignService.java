@@ -19,4 +19,5 @@ public interface CampaignService {
     void deleteCampaign(UUID publicId);
     CampaignResponse joinCampaign(String inviteCode);
     void assertIsDungeonMaster(UUID campaignPublicId);
+    void assertIsMember(UUID campaignPublicId);
 }
