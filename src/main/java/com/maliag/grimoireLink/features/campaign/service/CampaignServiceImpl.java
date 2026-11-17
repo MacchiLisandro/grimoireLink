@@ -42,9 +42,9 @@ public class CampaignServiceImpl implements CampaignService {
 
     @Override
     public CampaignResponse getByPublicId(UUID publicId){
+        assertIsMember(publicId);
         return mapper.toResponse(findByPublicId(publicId));
     }
-
     @Override
     @Transactional(readOnly = true)
     public List<CampaignResponse> getAllCampaignsByUser(){
@@ -57,6 +57,7 @@ public class CampaignServiceImpl implements CampaignService {
     @Override
     @Transactional(readOnly = true)
     public List<CampaignMemberResponse> getAllCampaignMembers(UUID publicId) {
+        assertIsMember(publicId);
         CampaignEntity campaign = findByPublicId(publicId);
         return campaign.getUsers().stream()
                 .map(uxcMapper::toResponse)
