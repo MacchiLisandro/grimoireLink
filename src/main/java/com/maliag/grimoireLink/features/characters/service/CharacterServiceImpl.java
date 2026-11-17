@@ -35,6 +35,7 @@ import com.maliag.grimoireLink.features.spellsXCharacter.SpellsXCharacterReposit
 import com.maliag.grimoireLink.features.spellsXCharacter.dto.AddSpellRequest;
 import com.maliag.grimoireLink.features.spellsXCharacter.exceptions.SpellAlreadyAddedException;
 import com.maliag.grimoireLink.features.spellsXCharacter.exceptions.SpellNotFoundException;
+import com.maliag.grimoireLink.features.usersXCampaign.Role;
 import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignEntity;
 import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -83,6 +84,10 @@ public class CharacterServiceImpl implements CharacterService {
         UsersXCampaignEntity member=usersXCampaignRepository
                 .findByUser_Credentials_UsernameAndCampaign_PublicId(username,publicCampaingId)
                 .orElseThrow(()-> new CharacterNotFoundException("Player not found in campaign"));
+
+        if (member.getRole() == Role.DUNGEON_MASTER) {
+            throw new CharacterAccessDeniedException("The DM cannot create characters");
+        }
 
         boolean isAlive=characterRepository.existsByUsersXCampaignEntityAndStatus(member, CharacterStatus.ALIVE);
 
