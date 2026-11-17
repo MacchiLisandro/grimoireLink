@@ -38,7 +38,9 @@ public class JournalServiceImpl implements JournalService {
 
     @Override
     public JournalResponse getByPublicId(UUID publicId) {
-        return mapper.toResponse(findByPublicId(publicId));
+        JournalEntity journal = findByPublicId(publicId);
+        campaignService.assertIsMember(journal.getCampaign().getPublicId());
+        return mapper.toResponse(journal);
     }
 
     @Override
@@ -47,6 +49,7 @@ public class JournalServiceImpl implements JournalService {
                                                 JournalEntryType journalEntryType,
                                                 LocalDateTime date) {
 
+        campaignService.assertIsMember(campaignPublicId);
         Specification<JournalEntity> spec = Specification
                 .where(byCampaignPublicId(campaignPublicId))
                 .and(byJournalEntryType(journalEntryType))
@@ -70,6 +73,7 @@ public class JournalServiceImpl implements JournalService {
     @Transactional
     public JournalResponse updateJournal(UUID publicId, UpdateJournalRequest request) {
         JournalEntity journal = findByPublicId(publicId);
+        campaignService.assertIsDungeonMaster(journal.getCampaign().getPublicId());
         if(request.getJournalEntryType()!=null){
             journal.setJournalEntryType(request.getJournalEntryType());
         }
@@ -83,6 +87,7 @@ public class JournalServiceImpl implements JournalService {
     @Transactional
     public void deleteJournal(UUID publicId) {
         JournalEntity journal = findByPublicId(publicId);
+        campaignService.assertIsDungeonMaster(journal.getCampaign().getPublicId());
         repository.delete(journal);
     }
 }
