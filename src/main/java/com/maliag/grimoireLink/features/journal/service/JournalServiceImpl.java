@@ -63,6 +63,7 @@ public class JournalServiceImpl implements JournalService {
     @Override
     @Transactional
     public JournalResponse createJournal(JournalRequest request) {
+        campaignService.assertIsDungeonMaster(request.getCampaignId());
         CampaignEntity campaign = campaignService.findByPublicId(request.getCampaignId());
         JournalEntity journal = mapper.toEntity(request);
         journal.setCampaign(campaign);
