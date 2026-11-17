@@ -1,6 +1,8 @@
 package com.maliag.grimoireLink.features.campaign.model;
 
 import com.maliag.grimoireLink.features.campaign.enums.CampaignStatus;
+import com.maliag.grimoireLink.features.encounter.models.EncounterEntity;
+import com.maliag.grimoireLink.features.journal.model.JournalEntity;
 import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -42,6 +44,14 @@ public class CampaignEntity {
 
     @OneToMany(mappedBy = "campaign", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<UsersXCampaignEntity> users = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "campaign", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<EncounterEntity> encounters = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "campaign", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<JournalEntity> journalEntries = new ArrayList<>();
 
     @PrePersist
     void onCreate(){

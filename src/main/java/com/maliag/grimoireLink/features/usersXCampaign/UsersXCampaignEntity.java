@@ -1,6 +1,7 @@
 package com.maliag.grimoireLink.features.usersXCampaign;
 
 import com.maliag.grimoireLink.features.campaign.model.CampaignEntity;
+import com.maliag.grimoireLink.features.characters.model.CharacterEntity;
 import com.maliag.grimoireLink.features.users.models.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,6 +9,8 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Builder
@@ -37,6 +40,10 @@ public class UsersXCampaignEntity {
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "usersXCampaignEntity", cascade = CascadeType.ALL)
+    private List<CharacterEntity> characters = new ArrayList<>();
 
     @PrePersist
     void onCreate(){

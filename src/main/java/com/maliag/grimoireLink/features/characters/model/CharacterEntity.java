@@ -1,6 +1,10 @@
 package com.maliag.grimoireLink.features.characters.model;
 
 import com.maliag.grimoireLink.features.characters.enums.CharacterStatus;
+import com.maliag.grimoireLink.features.featuresXCharacter.FeatureXCharacterEntity;
+import com.maliag.grimoireLink.features.itemsXCharacter.ItemsXCharacterEntity;
+import com.maliag.grimoireLink.features.skillsXCharacter.SkillsXCharacterEntity;
+import com.maliag.grimoireLink.features.spellsXCharacter.SpellsXCharacterEntity;
 import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignEntity;
 import com.maliag.grimoireLink.features.background.model.BackgroundEntity;
 import jakarta.persistence.*;
@@ -9,6 +13,8 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -83,6 +89,22 @@ public class CharacterEntity {
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private CharacterStatus status = CharacterStatus.ALIVE;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "character", cascade = CascadeType.ALL)
+    private List<SkillsXCharacterEntity> skillLinks = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "character", cascade = CascadeType.ALL)
+    private List<SpellsXCharacterEntity> spellLinks = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "character", cascade = CascadeType.ALL)
+    private List<FeatureXCharacterEntity> featureLinks = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "character", cascade = CascadeType.ALL)
+    private List<ItemsXCharacterEntity> itemLinks = new ArrayList<>();
 
     @PrePersist
     void onCreate(){
