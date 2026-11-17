@@ -42,13 +42,19 @@ public class EncounterServiceImpl implements EncounterService {
 
 
     @Transactional(readOnly = true)
-    public EncounterResponse getEncounterById (UUID encounterId){
-        return encounterMapper.toResponse(encounterRepository.findByPublicId(encounterId)
-                        .orElseThrow(() -> new EncounterNotFoundException("Encounter not found")));
+    public EncounterResponse getEncounterById(UUID encounterId) {
+        EncounterEntity encounter = encounterRepository.findByPublicId(encounterId)
+                .orElseThrow(() -> new EncounterNotFoundException("Encounter not found"));
+
+        campaignService.assertIsMember(encounter.getCampaign().getPublicId());
+
+        return encounterMapper.toResponse(encounter);
     }
 
     @Transactional(readOnly = true)
     public List<EncounterResponse> getAllEncountersByCampaign(UUID publicId) {
+        campaignService.assertIsMember(publicId);
+
         return encounterRepository.findByCampaignPublicId(publicId).stream()
                 .map(encounterMapper::toResponse)
                 .toList();
@@ -56,16 +62,14 @@ public class EncounterServiceImpl implements EncounterService {
 
     @Transactional
     public EncounterResponse updateStatusEncounter (UUID encounterId, EncounterStatus status){
-        EncounterEntity encounter = encounterRepository.findByPublicId(encounterId)
-                .orElseThrow(() -> new EncounterNotFoundException("Encounter not found"));
+        EncounterEntity encounter = findEncounterAsDm(encounterId);
         encounter.setEncounterStatus(status);
         return encounterMapper.toResponse(encounter);
     }
 
     @Transactional
     public EncounterResponse addCharacter(UUID encounterId, UUID characterId) {
-        EncounterEntity encounter = encounterRepository.findByPublicId(encounterId)
-                .orElseThrow(() -> new EncounterNotFoundException("Encounter not found"));
+        EncounterEntity encounter = findEncounterAsDm(encounterId);
         boolean alreadyInEncounter = encounter.getCharacters().stream()
                 .anyMatch(c -> c.getPublicId().equals(characterId));
         if (alreadyInEncounter) {
@@ -77,16 +81,14 @@ public class EncounterServiceImpl implements EncounterService {
 
     @Transactional
     public EncounterResponse addMonster(UUID encounterId, String monsterId) {
-        EncounterEntity encounter = encounterRepository.findByPublicId(encounterId)
-                .orElseThrow(() -> new EncounterNotFoundException("Encounter not found"));
+        EncounterEntity encounter = findEncounterAsDm(encounterId);
         encounter.getMonsters().add(monsterService.createMonsterFromApi(monsterId));
         return encounterMapper.toResponse(encounter);
     }
 
     @Transactional
     public EncounterResponse updateCharacterHp(UUID encounterId, UUID characterId, int newHp) {
-        EncounterEntity encounter = encounterRepository.findByPublicId(encounterId)
-                .orElseThrow(() -> new EncounterNotFoundException("Encounter not found"));
+        EncounterEntity encounter = findEncounterAsDm(encounterId);
         encounter.getCharacters().stream()
                 .filter(x -> x.getPublicId().equals(characterId))
                 .findFirst()
@@ -97,8 +99,7 @@ public class EncounterServiceImpl implements EncounterService {
 
     @Transactional
     public EncounterResponse updateMonsterHp(UUID encounterId, UUID monsterId, int newHp) {
-        EncounterEntity encounter = encounterRepository.findByPublicId(encounterId)
-                .orElseThrow(() -> new EncounterNotFoundException("Encounter not found"));
+        EncounterEntity encounter = findEncounterAsDm(encounterId);
         encounter.getMonsters().stream()
                 .filter(x -> x.getPublicId().equals(monsterId))
                 .findFirst()
@@ -109,17 +110,24 @@ public class EncounterServiceImpl implements EncounterService {
 
     @Transactional
     public EncounterResponse removeCharacter(UUID encounterId, UUID characterId) {
-        EncounterEntity encounter = encounterRepository.findByPublicId(encounterId)
-                .orElseThrow(() -> new EncounterNotFoundException("Encounter not found"));
+        EncounterEntity encounter = findEncounterAsDm(encounterId);
         encounter.getCharacters().removeIf(c -> c.getPublicId().equals(characterId));
         return encounterMapper.toResponse(encounter);
     }
 
     @Transactional
     public EncounterResponse removeMonster(UUID encounterId, UUID monsterId) {
-        EncounterEntity encounter = encounterRepository.findByPublicId(encounterId)
-                .orElseThrow(() -> new EncounterNotFoundException("Encounter not found"));
+        EncounterEntity encounter = findEncounterAsDm(encounterId);
         encounter.getMonsters().removeIf(m -> m.getPublicId().equals(monsterId));
         return encounterMapper.toResponse(encounter);
+    }
+
+    private EncounterEntity findEncounterAsDm(UUID encounterId) {
+        EncounterEntity encounter = encounterRepository.findByPublicId(encounterId)
+                .orElseThrow(() -> new EncounterNotFoundException("Encounter not found"));
+
+        campaignService.assertIsDungeonMaster(encounter.getCampaign().getPublicId());
+
+        return encounter;
     }
 }

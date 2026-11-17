@@ -1,15 +1,12 @@
 package com.maliag.grimoireLink.features.campaign.service;
 
-import com.maliag.grimoireLink.features.campaign.exceptions.DmAccessDeniedException;
-import com.maliag.grimoireLink.features.campaign.exceptions.DmNotFoundException;
+import com.maliag.grimoireLink.features.campaign.exceptions.*;
 import com.maliag.grimoireLink.features.campaign.model.CampaignEntity;
 import com.maliag.grimoireLink.features.campaign.mapper.CampaignMapper;
 import com.maliag.grimoireLink.features.campaign.repository.CampaignRepository;
 import com.maliag.grimoireLink.features.campaign.dto.CampaignRequest;
 import com.maliag.grimoireLink.features.campaign.dto.CampaignResponse;
 import com.maliag.grimoireLink.features.campaign.dto.UpdateCampaignRequest;
-import com.maliag.grimoireLink.features.campaign.exceptions.AlreadyMemberException;
-import com.maliag.grimoireLink.features.campaign.exceptions.CampaignNotFoundException;
 import com.maliag.grimoireLink.features.users.models.UserEntity;
 import com.maliag.grimoireLink.features.users.services.UserService;
 import com.maliag.grimoireLink.features.usersXCampaign.Role;
@@ -18,6 +15,7 @@ import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignMapper;
 import com.maliag.grimoireLink.features.usersXCampaign.UsersXCampaignRepository;
 import com.maliag.grimoireLink.features.usersXCampaign.dto.CampaignMemberResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,9 +42,9 @@ public class CampaignServiceImpl implements CampaignService {
 
     @Override
     public CampaignResponse getByPublicId(UUID publicId){
+        assertIsMember(publicId);
         return mapper.toResponse(findByPublicId(publicId));
     }
-
     @Override
     @Transactional(readOnly = true)
     public List<CampaignResponse> getAllCampaignsByUser(){
@@ -59,6 +57,7 @@ public class CampaignServiceImpl implements CampaignService {
     @Override
     @Transactional(readOnly = true)
     public List<CampaignMemberResponse> getAllCampaignMembers(UUID publicId) {
+        assertIsMember(publicId);
         CampaignEntity campaign = findByPublicId(publicId);
         return campaign.getUsers().stream()
                 .map(uxcMapper::toResponse)
@@ -142,19 +141,25 @@ public class CampaignServiceImpl implements CampaignService {
         return mapper.toResponse(campaign);
     }
 
-    @Transactional(readOnly = true)
-    public UsersXCampaignEntity getDm(UUID campaignPublicId){
+
+    private UsersXCampaignEntity getMembership(UUID campaignPublicId) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
         return uxcRepository
-                .findByCampaign_PublicIdAndRole(campaignPublicId, Role.DUNGEON_MASTER)
-                .orElseThrow(() -> new DmNotFoundException("DM not found"));
+                .findByUser_Credentials_UsernameAndCampaign_PublicId(username, campaignPublicId)
+                .orElseThrow(() -> new CampaignAccessDeniedException("You are not a member of this campaign"));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public void assertIsMember(UUID campaignPublicId) {
+        getMembership(campaignPublicId);
     }
 
     @Override
     @Transactional(readOnly = true)
     public void assertIsDungeonMaster(UUID campaignPublicId) {
-        UserEntity user = userService.getLoggedUserEntity();
-
-        if (!getDm(campaignPublicId).getUser().getPublicId().equals(user.getPublicId())) {
+        if (getMembership(campaignPublicId).getRole() != Role.DUNGEON_MASTER) {
             throw new DmAccessDeniedException("Only the DM can do this");
         }
     }
