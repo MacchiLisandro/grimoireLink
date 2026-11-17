@@ -42,13 +42,19 @@ public class EncounterServiceImpl implements EncounterService {
 
 
     @Transactional(readOnly = true)
-    public EncounterResponse getEncounterById (UUID encounterId){
-        return encounterMapper.toResponse(encounterRepository.findByPublicId(encounterId)
-                        .orElseThrow(() -> new EncounterNotFoundException("Encounter not found")));
+    public EncounterResponse getEncounterById(UUID encounterId) {
+        EncounterEntity encounter = encounterRepository.findByPublicId(encounterId)
+                .orElseThrow(() -> new EncounterNotFoundException("Encounter not found"));
+
+        campaignService.assertIsMember(encounter.getCampaign().getPublicId());
+
+        return encounterMapper.toResponse(encounter);
     }
 
     @Transactional(readOnly = true)
     public List<EncounterResponse> getAllEncountersByCampaign(UUID publicId) {
+        campaignService.assertIsMember(publicId);
+
         return encounterRepository.findByCampaignPublicId(publicId).stream()
                 .map(encounterMapper::toResponse)
                 .toList();
