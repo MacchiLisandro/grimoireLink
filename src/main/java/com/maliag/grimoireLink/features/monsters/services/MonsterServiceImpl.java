@@ -51,13 +51,10 @@ public class MonsterServiceImpl implements MonsterService {
     public void updateHp(UUID monsterId, int newHp) {
         MonsterEntity monster = monsterRepository.findByPublicId(monsterId)
                 .orElseThrow(() -> new MonsterNotFoundException("Monster not found"));
-        if (newHp <= 0) {
-            monster.setCurrentHp(0);
-            monster.setIsAlive(false);
-        } if(newHp >= monster.getMaxHp()) {
-            monster.setCurrentHp(monster.getMaxHp());
-        } else {
-            monster.setCurrentHp(newHp);
-        }
+
+        int hp = Math.max(0, Math.min(newHp, monster.getMaxHp()));
+
+        monster.setCurrentHp(hp);
+        monster.setIsAlive(hp > 0);
     }
 }
