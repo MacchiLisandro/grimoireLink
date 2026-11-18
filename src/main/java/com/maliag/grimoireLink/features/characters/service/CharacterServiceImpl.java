@@ -231,16 +231,15 @@ public class CharacterServiceImpl implements CharacterService {
 
         validateAccess(character,username);
 
-        if (newHp <=0){
-            newHp=0;
+        int hp = Math.max(0, Math.min(newHp, character.getMaxHp()));
+
+        if (hp == 0) {
             character.setStatus(CharacterStatus.UNCONSCIOUS);
+        } else if (character.getStatus() == CharacterStatus.UNCONSCIOUS) {
+            character.setStatus(CharacterStatus.ALIVE);
         }
 
-        if (newHp > character.getMaxHp()){
-            newHp=character.getMaxHp();
-        }
-
-        character.setCurrentHp(newHp);
+        character.setCurrentHp(hp);
 
         return buildResponse(character);
     }
