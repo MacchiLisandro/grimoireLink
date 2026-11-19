@@ -45,6 +45,7 @@ public class EncounterEntity {
     @Enumerated(EnumType.STRING)
     private EncounterStatus encounterStatus;
 
+    @Builder.Default
     @ManyToMany
     @JoinTable(
             name = "encounters_x_character",
@@ -57,6 +58,7 @@ public class EncounterEntity {
     @JoinColumn(name = "campaign_id", nullable = false)
     private CampaignEntity campaign;
 
+    @Builder.Default
     @ManyToMany
     @JoinTable(
             name = "encounters_x_monster",
