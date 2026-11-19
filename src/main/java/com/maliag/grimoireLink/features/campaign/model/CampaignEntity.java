@@ -42,6 +42,7 @@ public class CampaignEntity {
     @Enumerated(EnumType.STRING)
     private CampaignStatus status;
 
+    @Builder.Default
     @OneToMany(mappedBy = "campaign", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<UsersXCampaignEntity> users = new ArrayList<>();
 
