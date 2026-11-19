@@ -32,6 +32,9 @@ public class CharacterResponse {
     private Integer gold;
     private CharacterStatus status;
 
+    private UUID ownerPublicId;
+    private String ownerName;
+
     /// Calcularlo desde el mapper
     private int proficiencyBonus;
 
