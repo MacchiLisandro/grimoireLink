@@ -45,6 +45,8 @@ public class CharacterMapper {
                 .currentHP(character.getCurrentHp())
                 .gold(character.getGold())
                 .status(character.getStatus())
+                .ownerPublicId(character.getUsersXCampaignEntity().getUser().getPublicId())
+                .ownerName(character.getUsersXCampaignEntity().getUser().getName())
                 .proficiencyBonus(proficiencyBonus)
                 /// Las tiradas de abilityScore van por acua
                 .strengh(character.getStrength())
